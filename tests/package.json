@@ -1,0 +1,13 @@
+{
+  "name": "umatrix-tests",
+  "private": true,
+  "description": "End-to-end tests for the uMatrix extension builds",
+  "type": "module",
+  "scripts": {
+    "test": "node e2e.mjs",
+    "test:firefox": "node e2e-firefox.mjs"
+  },
+  "devDependencies": {
+    "puppeteer": "24.43.1"
+  }
+}
