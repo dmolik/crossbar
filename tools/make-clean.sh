@@ -3,5 +3,5 @@
 # This script assumes a linux environment
 
 echo "*** uMatrix(Chromium): Cleaning."
-rm -R ./dist/build
+rm -rf ./dist/build
 echo "*** uMatrix(Chromium): Cleaned."

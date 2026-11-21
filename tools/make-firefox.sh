@@ -2,6 +2,8 @@
 #
 # This script assumes a linux environment
 
+set -euo pipefail
+
 echo "*** uMatrix.firefox: Creating web store package"
 echo "*** uMatrix.firefox: Copying files"
 
@@ -23,12 +25,12 @@ cp    platform/firefox/manifest.json        $DES/
 echo "*** uMatrix.firefox: Generating meta..."
 python3 tools/make-firefox-meta.py          $DES/
 
-if [ "$1" = all ]; then
+if [ "${1:-}" = all ]; then
     echo "*** uMatrix.firefox: Creating package..."
     pushd $DES > /dev/null
     zip ../$(basename $DES).xpi -qr *
     popd > /dev/null
-elif [ -n "$1" ]; then
+elif [ -n "${1:-}" ]; then
     echo "*** uMatrix.firefox: Creating versioned package..."
     pushd $DES > /dev/null
     zip ../$(basename $DES).xpi -qr *

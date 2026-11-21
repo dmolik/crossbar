@@ -16,9 +16,14 @@ mkdir -p $DES
 cp    ./assets/assets.json $DES/
 cp -R ./assets/umatrix     $DES/
 
+# A bundled copy is only a fallback until the first remote update, so a
+# source being unreachable at build time is not fatal.
 fetch() {
     mkdir -p "$(dirname "$DES/thirdparties/$2")"
-    curl -fsSL --retry 3 --max-time 60 -o "$DES/thirdparties/$2" "$1"
+    if ! curl -fsSL --retry 3 --max-time 60 -o "$DES/thirdparties/$2" "$1"; then
+        rm -f "$DES/thirdparties/$2"
+        echo >&2 "warning: could not fetch $1"
+    fi
 }
 
 fetch 'https://publicsuffix.org/list/public_suffix_list.dat' \
