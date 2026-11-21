@@ -1,0 +1,18 @@
+{
+    "categories": {
+        "firefox": [ "privacy-security" ]
+    },
+    "summary": {
+        "en-US": "A point-and-click, matrix-based firewall: for each site you visit, choose which other sites it may connect to and what they may load. A maintained fork of uMatrix."
+    },
+    "homepage": {
+        "en-US": "https://github.com/dmolik/crossbar"
+    },
+    "support_url": {
+        "en-US": "https://github.com/dmolik/crossbar/issues"
+    },
+    "version": {
+        "license": "GPL-3.0-only",
+        "approval_notes": "Source: https://github.com/dmolik/crossbar (the uploaded source archive is that repository at the release tag). Build: ./tools/make-firefox.sh <tag>, which only copies files and writes the version into manifest.json; nothing is minified or bundled. The .wasm files are compiled from the .wat files next to them with wat2wasm."
+    }
+}

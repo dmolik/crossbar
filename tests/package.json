@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "test": "node e2e.mjs",
-    "test:firefox": "node e2e-firefox.mjs"
+    "test:firefox": "node e2e-firefox.mjs",
+    "icons": "node render-icons.mjs",
+    "screenshots": "node screenshots.mjs"
   },
   "devDependencies": {
     "puppeteer": "24.43.1"

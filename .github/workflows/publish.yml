@@ -1,0 +1,90 @@
+name: Publish
+
+# Submits a release to the Chrome Web Store and addons.mozilla.org. Runs when
+# a (draft) release created by CI is published, or by hand. Each store is
+# skipped until its secrets are set (see doc/store/README.md).
+#
+# The stores reject a version they already have: bump dist/version before
+# tagging.
+
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to publish
+        required: true
+      first-amo-submission:
+        description: First AMO submission (sends the full listing metadata)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  TAG: ${{ github.event.release.tag_name || inputs.tag }}
+
+jobs:
+  firefox:
+    runs-on: ubuntu-latest
+    env:
+      WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
+      WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.TAG }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Build
+        run: ./tools/make-firefox.sh "$TAG"
+      - name: Submit to AMO
+        if: env.WEB_EXT_API_KEY != ''
+        run: |
+          git archive --format=zip -o dist/build/source.zip HEAD
+          if [ "${{ inputs.first-amo-submission }}" = true ]; then
+            cp doc/store/amo-metadata.json dist/build/amo-metadata.json
+          else
+            jq '{ version: { approval_notes: .version.approval_notes } }' \
+              doc/store/amo-metadata.json > dist/build/amo-metadata.json
+          fi
+          npx --yes web-ext@10.8.0 sign \
+            --channel listed \
+            --source-dir dist/build/crossbar.firefox \
+            --artifacts-dir dist/build/signed \
+            --amo-metadata dist/build/amo-metadata.json \
+            --upload-source-code dist/build/source.zip \
+            --approval-timeout 0
+      - name: AMO secrets not set
+        if: env.WEB_EXT_API_KEY == ''
+        run: echo "::notice::AMO_JWT_ISSUER/AMO_JWT_SECRET not set, skipped AMO"
+
+  chromium:
+    runs-on: ubuntu-latest
+    env:
+      EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+      PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+      CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+      REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.TAG }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Build
+        run: ./tools/make-chromium.sh "$TAG"
+      - name: Upload and publish to the Chrome Web Store
+        if: env.EXTENSION_ID != ''
+        run: |
+          # The store wants manifest.json at the root of the zip.
+          (cd dist/build/crossbar.chromium && zip -qr ../crossbar-cws.zip .)
+          npx --yes chrome-webstore-upload-cli@4.0.2 --source dist/build/crossbar-cws.zip
+      - name: Chrome Web Store secrets not set
+        if: env.EXTENSION_ID == ''
+        run: echo "::notice::CWS_* secrets not set, skipped the Chrome Web Store"
