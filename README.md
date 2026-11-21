@@ -1,4 +1,11 @@
-## uMatrix<br>[<img src="https://travis-ci.org/gorhill/uMatrix.svg?branch=master" height="16">](https://travis-ci.org/gorhill/uMatrix)
+> [!NOTE]
+> This is a maintained fork of [gorhill/uMatrix](https://github.com/gorhill/uMatrix), which was archived in 2021. The Chromium build is ported to Manifest V3: rules are enforced with `declarativeNetRequest`, with these differences from the original:
+> - The `Referer` header of third-party requests is removed instead of spoofed.
+> - Partial IP addresses and IPv6 addresses can't be used as rule destinations.
+>
+> The Firefox build is still Manifest V2. Packages are attached to [releases](https://github.com/dmolik/uMatrix/releases).
+
+## uMatrix<br>[![CI](https://github.com/dmolik/uMatrix/actions/workflows/ci.yml/badge.svg)](https://github.com/dmolik/uMatrix/actions/workflows/ci.yml)
 
 Definitely for advanced users.
 

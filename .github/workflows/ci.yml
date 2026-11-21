@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+    tags: [ '*' ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npx --yes jshint@2.13.6 --config .jshintrc src/js/*.js platform/chromium/*.js platform/firefox/*.js
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - browser: chromium
+            ext: zip
+          - browser: firefox
+            ext: xpi
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tests/package-lock.json
+      - name: Build
+        run: ./tools/make-${{ matrix.browser }}.sh ${{ github.ref_type == 'tag' && github.ref_name || 'all' }}
+      - name: Lint Firefox package
+        if: matrix.browser == 'firefox'
+        run: npx --yes web-ext@8 lint --self-hosted --warnings-as-errors -s dist/build/uMatrix.firefox
+      - name: Install test dependencies
+        working-directory: tests
+        run: npm ci
+      - name: Install browser
+        working-directory: tests
+        run: npx puppeteer browsers install ${{ matrix.browser == 'firefox' && 'firefox@stable' || 'chrome' }}
+      - name: End-to-end tests
+        working-directory: tests
+        run: npm run ${{ matrix.browser == 'firefox' && 'test:firefox' || 'test' }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: uMatrix.${{ matrix.browser }}
+          path: dist/build/*.${{ matrix.ext }}
+          if-no-files-found: error
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: [ lint, build ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" dist/* --repo "${{ github.repository }}" --draft --title "${{ github.ref_name }}" --generate-notes
