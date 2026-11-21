@@ -1,7 +1,7 @@
 /*! https://mths.be/punycode v2.3.1 by @mathias */
 'use strict';
 
-// uMatrix: wrapped in a block and exposed as `self.punycode` so that it can be
+// Crossbar: wrapped in a block and exposed as `self.punycode` so that it can be
 // loaded as a classic script.
 {
 

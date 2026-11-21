@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a browser extension to block requests.
+    Crossbar - a browser extension to block requests.
     Copyright (C) 2014-2018 The uBlock Origin authors
     Copyright (C) 2017-present Raymond Hill
 
@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 // For background page
@@ -1289,8 +1289,8 @@ vAPI.Net = class {
         return false;
     }
     async benchmark() {
-        if ( typeof µMatrix !== 'object' ) { return; }
-        const requests = await µMatrix.loadBenchmarkDataset();
+        if ( typeof Crossbar !== 'object' ) { return; }
+        const requests = await Crossbar.loadBenchmarkDataset();
         if ( Array.isArray(requests) === false || requests.length === 0 ) {
             console.info('No requests found to benchmark');
             return;

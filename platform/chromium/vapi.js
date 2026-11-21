@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a browser extension to block requests.
+    Crossbar - a browser extension to block requests.
     Copyright (C) 2017-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -51,8 +51,8 @@ var vAPI = self.vAPI; // jshint ignore:line
 
 // Service worker (Chromium MV3): no document, always the background context.
 if ( typeof document === 'undefined' ) {
-    if ( self.vAPI instanceof Object === false || vAPI.uMatrix !== true ) {
-        vAPI = self.vAPI = { uMatrix: true };
+    if ( self.vAPI instanceof Object === false || vAPI.crossbar !== true ) {
+        vAPI = self.vAPI = { crossbar: true };
     }
 } else if (
     (
@@ -64,10 +64,10 @@ if ( typeof document === 'undefined' ) {
         /^image\/|^text\/plain/.test(document.contentType || '') === false
     ) &&
     (
-        self.vAPI instanceof Object === false || vAPI.uMatrix !== true
+        self.vAPI instanceof Object === false || vAPI.crossbar !== true
     )
 ) {
-    vAPI = self.vAPI = { uMatrix: true };
+    vAPI = self.vAPI = { crossbar: true };
 }
 
 
@@ -84,7 +84,7 @@ if ( typeof document === 'undefined' ) {
     - Add code beyond the following code
     Reason:
     - https://github.com/gorhill/uBlock/pull/3721
-    - uMatrix never uses the return value from injected content scripts
+    - Crossbar never uses the return value from injected content scripts
 
 **/
 

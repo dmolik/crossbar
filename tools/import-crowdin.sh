@@ -5,7 +5,7 @@
 DLDIR=~/Downloads
 ARCDIR=$DLDIR/crowdin
 
-echo "*** uMatrix: Importing from Crowdin archive"
+echo "*** Crossbar: Importing from Crowdin archive"
 rm -r $ARCDIR
 unzip -q $DLDIR/uMatrix.zip -d $ARCDIR
 
@@ -66,6 +66,6 @@ cp $SRCDIR/zh_CN/messages.json  $DESDIR/zh_CN/messages.json
 cp $SRCDIR/zh_TW/messages.json  $DESDIR/zh_TW/messages.json
 
 rm -r $ARCDIR
-echo "*** uMatrix: Import done."
+echo "*** Crossbar: Import done."
 
 git status

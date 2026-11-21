@@ -1,10 +1,10 @@
-uMatrix: een contextafhankelijke en matrix-gebaseerde firewall, met vele functies ter verbetering van uw privacy.
+Crossbar: een contextafhankelijke en matrix-gebaseerde firewall, met vele functies ter verbetering van uw privacy.
 
 *Voor gevorderde gebruikers.*
 
-uMatrix geeft volledige controle over welke verbindingen uw browser mag maken, welk type gegevens de browser mag downloaden, en wat erin mag worden uitgevoerd. Niemand anders beslist het: het is uw keuze. U hebt de volledige controle over uw privacy.
+Crossbar geeft volledige controle over welke verbindingen uw browser mag maken, welk type gegevens de browser mag downloaden, en wat erin mag worden uitgevoerd. Niemand anders beslist het: het is uw keuze. U hebt de volledige controle over uw privacy.
 
-Direct na installatie werkt uMatrix in de modus alles-blokkeren/bij-uitzondering-blokkeren, wat inhoudt dat websites die scripts van derden nodig hebben waarschijnlijk niet goed worden weergegeven. Met twee muisklikken kan uMatrix worden ingesteld om in de modus alles-toestaan/bij-uitzondering-blokkeren te werken, waarmee websites doorgaans wel goed worden weergegeven. Zie https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views voor meer details over dit onderwerp.
+Direct na installatie werkt Crossbar in de modus alles-blokkeren/bij-uitzondering-blokkeren, wat inhoudt dat websites die scripts van derden nodig hebben waarschijnlijk niet goed worden weergegeven. Met twee muisklikken kan Crossbar worden ingesteld om in de modus alles-toestaan/bij-uitzondering-blokkeren te werken, waarmee websites doorgaans wel goed worden weergegeven. Zie https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views voor meer details over dit onderwerp.
 
 * Bekijk ALLE externe verbindingen, mislukte of gepoogde, afhankelijk van of deze werden geblokkeerd of toegestaan (u beslist).
 
@@ -14,7 +14,7 @@ Direct na installatie werkt uMatrix in de modus alles-blokkeren/bij-uitzondering
 
 * U hoeft niet slechts op één bepaalde beheerde blacklist (betwistbaar met veel ontbrekende vermeldingen) te vertrouwen waarbuiten niets anders kan worden geblokkeerd: u hebt de volledige controle.
 
-* Gebruikersgemak: met uMatrix kunt u eenvoudig netwerkaanvragen die van een webpagina afkomstig zijn whitelisten/blacklisten, volgens een matrix via aanwijzen en klikken:
+* Gebruikersgemak: met Crossbar kunt u eenvoudig netwerkaanvragen die van een webpagina afkomstig zijn whitelisten/blacklisten, volgens een matrix via aanwijzen en klikken:
 
 - domeinnamen (linkerkolom)
   * van zeer specifieke
@@ -32,7 +32,7 @@ Direct na installatie werkt uMatrix in de modus alles-blokkeren/bij-uitzondering
 
 Met slechts één klik kunt u een enkele cel, een hele rij, een groep rijen, een hele kolom, of de hele matrix blacklisten/whitelisten.
 
-De filterengine van uMatrix gebruikt voorrangslogica voor het evalueren van wat er volgens de cellen die zijn geblacklist/gewhitelist is geblokkeerd/toegestaan. Hierdoor kunt u bijvoorbeeld met één klik een hele pagina whitelisten, zonder dat u dat herhaaldelijk moet doen bij nieuwe gegevens die op de pagina verschijnen.
+De filterengine van Crossbar gebruikt voorrangslogica voor het evalueren van wat er volgens de cellen die zijn geblacklist/gewhitelist is geblokkeerd/toegestaan. Hierdoor kunt u bijvoorbeeld met één klik een hele pagina whitelisten, zonder dat u dat herhaaldelijk moet doen bij nieuwe gegevens die op de pagina verschijnen.
 
 Alle regels worden aan een bereik gerelateerd. U kunt bijvoorbeeld ‘facebook.com’ en ‘facebook.net’ overal blokkeren, behalve wanneer u een pagina op ‘www.facebook.com’ bezoekt. Op deze manier zal Facebook geen profiel van uw surfgedrag kunnen opbouwen.
 
@@ -76,6 +76,6 @@ Deze extensie is ook nuttig als u het browsen wilt versnellen, bijvoorbeeld door
 
 BUGS, PROBLEMEN: https://github.com/gorhill/uMatrix/issues
 
-BRONCODE: https://github.com/gorhill/uMatrix (GPLv3)
+BRONCODE: https://github.com/dmolik/crossbar (GPLv3)
 
-CHANGELOG: https://github.com/gorhill/uMatrix/releases
+CHANGELOG: https://github.com/dmolik/crossbar/releases

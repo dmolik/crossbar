@@ -573,7 +573,7 @@ const HNTrieContainer = class {
                 return null;
             }
             // Soft-dependency on vAPI so that the code here can be used
-            // outside of uMatrix (i.e. tests, benchmarks)
+            // outside of Crossbar (i.e. tests, benchmarks)
             if ( typeof vAPI === 'object' && vAPI.canWASM !== true ) {
                 return null;
             }
@@ -757,7 +757,7 @@ HNTrieContainer.prototype.HNTrieRef.prototype.needle = '';
 
 /******************************************************************************/
 
-µMatrix.HNTrieContainer = HNTrieContainer;
+Crossbar.HNTrieContainer = HNTrieContainer;
 
 // end of local namespace
 // *****************************************************************************

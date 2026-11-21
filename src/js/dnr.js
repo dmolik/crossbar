@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a browser extension to block requests.
+    Crossbar - a browser extension to block requests.
     Copyright (C) 2014-present The uMatrix/uBlock Origin authors
 
     This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 'use strict';
@@ -36,7 +36,7 @@
   `Matrix.evaluateCellZXY(scope, hostname, type)` only depends on the
   nearest ancestor of `hostname` (itself included) which is the destination
   of a rule applying to that scope. So for each such "relevant" destination
-  the verdict is computed with uMatrix's own evaluation code, and emitted as
+  the verdict is computed with Crossbar's own evaluation code, and emitted as
   a rule matching that destination and its subdomains, with a priority
   increasing with the number of labels of the destination, so that the most
   specific destination wins.
@@ -65,7 +65,7 @@
 
 **/
 
-µMatrix.dnr = (( ) => {
+Crossbar.dnr = (( ) => {
 
 /******************************************************************************/
 
@@ -79,11 +79,11 @@ if (
 }
 
 const dnr = browser.declarativeNetRequest;
-const µm = µMatrix;
+const xb = Crossbar;
 
 /******************************************************************************/
 
-// uMatrix type => declarativeNetRequest resource types, as per
+// Crossbar type => declarativeNetRequest resource types, as per
 // FilteringContext.requestTypeNormalizer. `doc` is top-level documents only,
 // handled separately.
 
@@ -123,8 +123,8 @@ const MAIN_FRAME_GROUP = '';
 
 // A hostname which can't be a relevant destination nor be first-party to
 // a scope, used to compute the verdict for "everything else".
-const UNMATCHED_HOSTNAME = 'umatrix-unmatched.invalid';
-const UNMATCHED_LABEL = 'umatrix-unmatched.';
+const UNMATCHED_HOSTNAME = 'crossbar-unmatched.invalid';
+const UNMATCHED_LABEL = 'crossbar-unmatched.';
 
 /******************************************************************************/
 
@@ -151,14 +151,14 @@ const labelCount = function(hn) {
 // none.
 const nearestAncestorIn = function(hn, set) {
     for (;;) {
-        hn = µm.Matrix.toBroaderHostname(hn);
+        hn = xb.Matrix.toBroaderHostname(hn);
         if ( hn === '' || hn === '*' ) { return ''; }
         if ( set.has(hn) ) { return hn; }
     }
 };
 
 const domainFromHostname = function(hn) {
-    return µm.URI.domainFromHostname(hn) || hn;
+    return xb.URI.domainFromHostname(hn) || hn;
 };
 
 /******************************************************************************/
@@ -169,7 +169,7 @@ let matrixIndex;
 
 const getMatrixIndex = function() {
     if ( matrixIndex !== undefined ) { return matrixIndex; }
-    const matrix = µm.tMatrix;
+    const matrix = xb.tMatrix;
     const destinations = new Map();
     const hostnames = new Set();
     for ( const key of matrix.rules.keys() ) {
@@ -305,7 +305,7 @@ const removeReferrerAction = {
 // from `scope`.
 
 const compileScope = function(scope, secure, tabIds) {
-    const matrix = µm.tMatrix;
+    const matrix = xb.tMatrix;
     const out = [];
     const extraCondition = { tabIds };
 
@@ -334,7 +334,7 @@ const compileScope = function(scope, secure, tabIds) {
     // destinations.
     const { destinations } = getMatrixIndex();
     const relevant = new Set();
-    for ( let src = scope; src !== ''; src = µm.Matrix.toBroaderHostname(src) ) {
+    for ( let src = scope; src !== ''; src = xb.Matrix.toBroaderHostname(src) ) {
         const entry = destinations.get(src);
         if ( entry === undefined ) { continue; }
         for ( const des of entry ) {
@@ -347,7 +347,7 @@ const compileScope = function(scope, secure, tabIds) {
     }
 
     const mustBlock = (hn, type) =>
-        (matrix.evaluateCellZXY(scope, hn, type) & 3) === µm.Matrix.Red;
+        (matrix.evaluateCellZXY(scope, hn, type) & 3) === xb.Matrix.Red;
     const verdictOf = hn => {
         let bits = 0;
         for ( let i = 0; i < subresourceTypes.length; i++ ) {
@@ -392,7 +392,7 @@ const compileScope = function(scope, secure, tabIds) {
         relevant,
         hn => mustBlock(hn, 'script'),
         mustBlock(UNMATCHED_HOSTNAME, 'script'),
-        cspAction(µm.cspNoInlineScript),
+        cspAction(xb.cspNoInlineScript),
         frameTypes,
         extraCondition
     );
@@ -401,7 +401,7 @@ const compileScope = function(scope, secure, tabIds) {
         relevant,
         hn => mustBlock(hn, 'css'),
         mustBlock(UNMATCHED_HOSTNAME, 'css'),
-        cspAction(µm.cspNoInlineStyle),
+        cspAction(xb.cspNoInlineStyle),
         frameTypes,
         extraCondition
     );
@@ -409,7 +409,7 @@ const compileScope = function(scope, secure, tabIds) {
     if ( matrix.evaluateSwitchZ('no-workers', scope) ) {
         out.push({
             priority: PRIORITY_HEADERS,
-            action: cspAction(µm.cspNoWorker),
+            action: cspAction(xb.cspNoWorker),
             condition: { resourceTypes: frameTypes, tabIds },
         });
     }
@@ -436,7 +436,7 @@ const compileScope = function(scope, secure, tabIds) {
 // switch, can be the nearest relevant ancestor.
 
 const compileMainFrame = function() {
-    const matrix = µm.tMatrix;
+    const matrix = xb.tMatrix;
     const out = [];
     const { hostnames } = getMatrixIndex();
 
@@ -444,14 +444,14 @@ const compileMainFrame = function() {
     // is the nearest relevant ancestor: if `hn` is above its own domain
     // (e.g. a public suffix), a subdomain has a different first-party domain.
     const representativeOf = hn => {
-        const domain = µm.URI.domainFromHostname(hn);
+        const domain = xb.URI.domainFromHostname(hn);
         return domain !== '' && (hn === domain || hn.endsWith(`.${domain}`))
             ? hn
             : UNMATCHED_LABEL + hn;
     };
     const mustBlock = (hn, type) => {
         const rep = representativeOf(hn);
-        return (matrix.evaluateCellZXY(rep, rep, type) & 3) === µm.Matrix.Red;
+        return (matrix.evaluateCellZXY(rep, rep, type) & 3) === xb.Matrix.Red;
     };
     const switchOf = (hn, name) =>
         matrix.evaluateSwitchZ(name, representativeOf(hn));
@@ -464,7 +464,7 @@ const compileMainFrame = function() {
     emitPrioritizedRules(
         out,
         verdicts,
-        (matrix.evaluateCellZXY(UNMATCHED_HOSTNAME, UNMATCHED_HOSTNAME, 'doc') & 3) === µm.Matrix.Red ? 1 : 0,
+        (matrix.evaluateCellZXY(UNMATCHED_HOSTNAME, UNMATCHED_HOSTNAME, 'doc') & 3) === xb.Matrix.Red ? 1 : 0,
         blocked => [ blocked ? [ redirectAction, mainFrameTypes ] : [ { type: 'allow' }, mainFrameTypes ] ],
         undefined
     );
@@ -476,22 +476,22 @@ const compileMainFrame = function() {
     }
 
     const rootBlocks = type =>
-        (matrix.evaluateCellZXY(UNMATCHED_HOSTNAME, UNMATCHED_HOSTNAME, type) & 3) === µm.Matrix.Red;
+        (matrix.evaluateCellZXY(UNMATCHED_HOSTNAME, UNMATCHED_HOSTNAME, type) & 3) === xb.Matrix.Red;
     const rootSwitch = name => matrix.evaluateSwitchZ(name, UNMATCHED_HOSTNAME);
 
     emitRegionRules(out, hostnames, hn => mustBlock(hn, 'cookie'),
         rootBlocks('cookie'), removeCookieAction, mainFrameTypes);
     emitRegionRules(out, hostnames, hn => mustBlock(hn, 'script'),
-        rootBlocks('script'), cspAction(µm.cspNoInlineScript), mainFrameTypes);
+        rootBlocks('script'), cspAction(xb.cspNoInlineScript), mainFrameTypes);
     emitRegionRules(out, hostnames, hn => mustBlock(hn, 'css'),
-        rootBlocks('css'), cspAction(µm.cspNoInlineStyle), mainFrameTypes);
+        rootBlocks('css'), cspAction(xb.cspNoInlineStyle), mainFrameTypes);
     emitRegionRules(out, hostnames, hn => switchOf(hn, 'no-workers'),
-        rootSwitch('no-workers'), cspAction(µm.cspNoWorker), mainFrameTypes);
+        rootSwitch('no-workers'), cspAction(xb.cspNoWorker), mainFrameTypes);
     emitRegionRules(out, hostnames, hn => switchOf(hn, 'referrer-spoof'),
         rootSwitch('referrer-spoof'), removeReferrerAction, mainFrameTypes,
         { domainType: 'thirdParty' });
 
-    if ( µm.userSettings.processHyperlinkAuditing ) {
+    if ( xb.userSettings.processHyperlinkAuditing ) {
         out.push({
             priority: PRIORITY_PING,
             action: { type: 'block' },
@@ -557,7 +557,7 @@ const setBlocklist = async function(hostnames) {
             addRules,
         });
     } catch(reason) {
-        console.error('uMatrix: failed to update blocklist rules:', reason);
+        console.error('Crossbar: failed to update blocklist rules:', reason);
     }
 };
 
@@ -667,7 +667,7 @@ const commit = async function() {
     try {
         await dnr.updateSessionRules({ removeRuleIds, addRules });
     } catch(reason) {
-        console.error('uMatrix: failed to update session rules:', reason);
+        console.error('Crossbar: failed to update session rules:', reason);
     }
 };
 
@@ -682,7 +682,7 @@ const start = async function() {
         leftoverRuleIds.push(rule.id);
         nextRuleId = Math.max(nextRuleId, rule.id + 1);
     }
-    const behindTheScene = µm.tabContextManager.mustLookup(vAPI.noTabId);
+    const behindTheScene = xb.tabContextManager.mustLookup(vAPI.noTabId);
     setTabScope(vAPI.noTabId, behindTheScene.rootHostname, false);
     started = true;
     onMatrixChanged();
@@ -690,7 +690,7 @@ const start = async function() {
 };
 
 self.addEventListener('matrixRulesetChange', ev => {
-    if ( ev.detail !== µm.tMatrix ) { return; }
+    if ( ev.detail !== xb.tMatrix ) { return; }
     onMatrixChanged();
 });
 

@@ -23,7 +23,7 @@
 
 /******************************************************************************/
 
-µMatrix.assets = (( ) => {
+Crossbar.assets = (( ) => {
 
 /******************************************************************************/
 
@@ -68,7 +68,7 @@ api.fetch = function(url, options = {}) {
     return new Promise((resolve, reject) => {
     // Start of executor
 
-    const timeoutAfter = µMatrix.rawSettings.assetFetchTimeout * 1000 || 30000;
+    const timeoutAfter = Crossbar.rawSettings.assetFetchTimeout * 1000 || 30000;
     const xhr = new XMLHttpRequest();
     let contentLoaded = 0;
     let timeoutTimer;
@@ -85,7 +85,7 @@ api.fetch = function(url, options = {}) {
     };
 
     const fail = function(details, msg) {
-        µMatrix.logger.writeOne({
+        Crossbar.logger.writeOne({
             realm: 'message',
             type: 'error',
             text: msg,
@@ -155,7 +155,7 @@ api.fetch = function(url, options = {}) {
 // version above: time out only when there is no progress.
 
 const fetchWithFetchAPI = async function(url, options) {
-    const timeoutAfter = µMatrix.rawSettings.assetFetchTimeout * 1000 || 30000;
+    const timeoutAfter = Crossbar.rawSettings.assetFetchTimeout * 1000 || 30000;
     const controller = new self.AbortController();
     let timeoutTimer;
     const armTimeout = ( ) => {
@@ -164,7 +164,7 @@ const fetchWithFetchAPI = async function(url, options) {
     };
 
     const fail = function(details, msg) {
-        µMatrix.logger.writeOne({
+        Crossbar.logger.writeOne({
             realm: 'message',
             type: 'error',
             text: msg,
@@ -231,7 +231,7 @@ api.fetchText = async function(url) {
     //   the browser cache.
     if ( isExternal ) {
         const cacheBypassToken =
-            µMatrix.rawSettings.assetFetchBypassBrowserCache
+            Crossbar.rawSettings.assetFetchBypassBrowserCache
                 ? Math.floor(Date.now() /    1000) % 86400
                 : Math.floor(Date.now() / 3600000) %    12;
         const queryValue = `_=${cacheBypassToken}`;
@@ -288,7 +288,7 @@ let assetSourceRegistryPromise,
 
 const getAssetSourceRegistry = function() {
     if ( assetSourceRegistryPromise === undefined ) {
-        assetSourceRegistryPromise = µMatrix.cacheStorage.get(
+        assetSourceRegistryPromise = Crossbar.cacheStorage.get(
             'assetSourceRegistry'
         ).then(bin => {
             if (
@@ -360,7 +360,7 @@ const saveAssetSourceRegistry = (( ) => {
     let timer;
     const save = function() {
         timer = undefined;
-        µMatrix.cacheStorage.set({ assetSourceRegistry });
+        Crossbar.cacheStorage.set({ assetSourceRegistry });
     };
     return function(lazily) {
         if ( timer !== undefined ) {
@@ -431,7 +431,7 @@ let assetCacheRegistry = {};
 
 const getAssetCacheRegistry = function() {
     if ( assetCacheRegistryPromise === undefined ) {
-        assetCacheRegistryPromise = µMatrix.cacheStorage.get(
+        assetCacheRegistryPromise = Crossbar.cacheStorage.get(
             'assetCacheRegistry'
         ).then(bin => {
             if (
@@ -451,7 +451,7 @@ const saveAssetCacheRegistry = (( ) => {
     let timer;
     const save = function() {
         timer = undefined;
-        µMatrix.cacheStorage.set({ assetCacheRegistry });
+        Crossbar.cacheStorage.set({ assetCacheRegistry });
     };
     return function(lazily) {
         if ( timer !== undefined ) { clearTimeout(timer); }
@@ -475,7 +475,7 @@ const assetCacheRead = async function(assetKey, updateReadTime = false) {
 
     const [ , bin ] = await Promise.all([
         getAssetCacheRegistry(),
-        µMatrix.cacheStorage.get(internalKey),
+        Crossbar.cacheStorage.get(internalKey),
     ]);
     if (
         bin instanceof Object === false ||
@@ -519,7 +519,7 @@ const assetCacheWrite = async function(assetKey, details) {
     if ( details instanceof Object && typeof details.url === 'string' ) {
         entry.remoteURL = details.url;
     }
-    µMatrix.cacheStorage.set({
+    Crossbar.cacheStorage.set({
         assetCacheRegistry,
         [`cache/${assetKey}`]: content
     });
@@ -546,8 +546,8 @@ const assetCacheRemove = async function(pattern) {
         delete cacheDict[assetKey];
     }
     if ( removedContent.length !== 0 ) {
-        µMatrix.cacheStorage.remove(removedContent);
-        µMatrix.cacheStorage.set({ assetCacheRegistry });
+        Crossbar.cacheStorage.remove(removedContent);
+        Crossbar.cacheStorage.set({ assetCacheRegistry });
     }
     for ( let i = 0; i < removedEntries.length; i++ ) {
         fireNotification(
@@ -581,7 +581,7 @@ const assetCacheMarkAsDirty = async function(pattern, exclude) {
         mustSave = true;
     }
     if ( mustSave ) {
-        µMatrix.cacheStorage.set({ assetCacheRegistry });
+        Crossbar.cacheStorage.set({ assetCacheRegistry });
     }
 };
 
@@ -632,7 +632,7 @@ const saveUserAsset = function(assetKey, content) {
 /******************************************************************************/
 
 api.get = async function(assetKey, options = {}) {
-    if ( assetKey === µMatrix.userFiltersPath ) {
+    if ( assetKey === Crossbar.userFiltersPath ) {
         return readUserAsset(assetKey);
     }
 
@@ -912,7 +912,7 @@ api.updateStop = function() {
 
 api.isUpdating = function() {
     return updaterStatus === 'updating' &&
-           updaterAssetDelay <= µMatrix.rawSettings.manualUpdateAssetFetchPeriod;
+           updaterAssetDelay <= Crossbar.rawSettings.manualUpdateAssetFetchPeriod;
 };
 
 /******************************************************************************/

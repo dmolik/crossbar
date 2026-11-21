@@ -4,10 +4,10 @@
 
 set -euo pipefail
 
-echo "*** uMatrix(Chromium): Creating package"
-echo "*** uMatrix(Chromium): Copying files"
+echo "*** Crossbar(Chromium): Creating package"
+echo "*** Crossbar(Chromium): Copying files"
 
-DES=./dist/build/uMatrix.chromium
+DES=./dist/build/crossbar.chromium
 rm -rf $DES
 mkdir -p $DES
 
@@ -20,20 +20,20 @@ cp -R ./platform/chromium/img/*         $DES/img/
 cp    ./platform/chromium/manifest.json $DES/
 cp    LICENSE.txt                       $DES/
 
-echo "*** uMatrix.chromium: Generating meta..."
+echo "*** crossbar.chromium: Generating meta..."
 python3 tools/make-chromium-meta.py $DES/
 python3 tools/make-mv3-sw.py $DES/
 
 if [ "${1:-}" = all ]; then
-    echo "*** uMatrix.chromium: Creating package..."
+    echo "*** crossbar.chromium: Creating package..."
     pushd $(dirname $DES/)
-    zip uMatrix.chromium.zip -qr $(basename $DES/)/*
+    zip crossbar.chromium.zip -qr $(basename $DES/)/*
     popd
 elif [ -n "${1:-}" ]; then
-    echo "*** uMatrix.chromium: Creating versioned package..."
+    echo "*** crossbar.chromium: Creating versioned package..."
     pushd $(dirname $DES/) > /dev/null
-    zip uMatrix_"$1".chromium.zip -qr $(basename $DES/)/*
+    zip crossbar_"$1".chromium.zip -qr $(basename $DES/)/*
     popd > /dev/null
 fi
 
-echo "*** uMatrix(Chromium): Package done."
+echo "*** Crossbar(Chromium): Package done."

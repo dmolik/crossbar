@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a Chromium browser extension to black/white list requests.
+    Crossbar - a Chromium browser extension to black/white list requests.
     Copyright (C) 2014-2018 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -16,14 +16,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 'use strict';
 
 /******************************************************************************/
 
-µMatrix.LiquidDict = (( ) => {
+Crossbar.LiquidDict = (( ) => {
 
 /******************************************************************************/
 
@@ -196,4 +196,4 @@ return LiquidDict;
 
 /******************************************************************************/
 
-µMatrix.ubiquitousBlacklist = new µMatrix.LiquidDict();
+Crossbar.ubiquitousBlacklist = new Crossbar.LiquidDict();

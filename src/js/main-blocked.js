@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a browser extension to block requests.
+    Crossbar - a browser extension to block requests.
     Copyright (C) 2015-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify

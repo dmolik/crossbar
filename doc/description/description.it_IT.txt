@@ -1,8 +1,8 @@
-uMatrix: un firewall a matrice del tipo punta e clicca, con molte funzionalità a salvaguardia della privacy. Per utenti avanzati.
+Crossbar: un firewall a matrice del tipo punta e clicca, con molte funzionalità a salvaguardia della privacy. Per utenti avanzati.
 
-uMatrix permette il pieno controllo delle connessioni del browser, del tipo di dati che può scaricare e di cosa può eseguire. Nessun'altro decide per te: Tu scegli. Solo tu hai il controllo completo della tua privacy.
+Crossbar permette il pieno controllo delle connessioni del browser, del tipo di dati che può scaricare e di cosa può eseguire. Nessun'altro decide per te: Tu scegli. Solo tu hai il controllo completo della tua privacy.
 
-In configurazione standard, uMatrix funziona in modalità blocca-tutto/permetti-eccezionalmente, vale a dire che i siti che richiedono script di terze parti, facilmente risulteranno incompleti o con errori. Con solo un paio di click, uMatrix può essere configurato in modalità permetti-tutto/blocca-eccezionalmente, che generalmente non causa problemi nel caricamento dei siti. Vedere https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views per ulteriori dettagli.
+In configurazione standard, Crossbar funziona in modalità blocca-tutto/permetti-eccezionalmente, vale a dire che i siti che richiedono script di terze parti, facilmente risulteranno incompleti o con errori. Con solo un paio di click, Crossbar può essere configurato in modalità permetti-tutto/blocca-eccezionalmente, che generalmente non causa problemi nel caricamento dei siti. Vedere https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views per ulteriori dettagli.
 
 Riguardo il mito che i browser basati su Chromium non possano bloccare efficacemente javascript, vedere: https://github.com/gorhill/httpswitchboard/wiki/Blocking-javascript-execution-reliably-in-Chromium-based-browsers. In sostanza: Si, javascript può essere efficacemente bloccato in Chromium.
 
@@ -14,7 +14,7 @@ Riguardo il mito che i browser basati su Chromium non possano bloccare efficacem
 
 * Tu non devi unicamente affidarti ad una singola lista nera (presumibilmente con molte voci mancanti) al di fuori della quale niente altro può essere bloccato: Tu hai il pieno controllo.
 
-* Semplicità d'uso: uMatrix consente di permettere/bloccare le richieste originate da una pagina web secondo uno schema a matrice, punta e clicca:
+* Semplicità d'uso: Crossbar consente di permettere/bloccare le richieste originate da una pagina web secondo uno schema a matrice, punta e clicca:
 
 - nome del dominio (colonna di sinistra)
   * dal molto specifico
@@ -32,7 +32,7 @@ Riguardo il mito che i browser basati su Chromium non possano bloccare efficacem
 
 Tu puoi permettere/bloccare una singola cella, una intera riga, un gruppo di righe, una intera colonna o l'intera matrice, con solo un click.
 
-Il sistema di filtri di uMatrix utilizza una logica di priorità per valutare cosa viene bloccato/permesso, secondo le celle che sono in black o white list. Per esempio, questo permette di mettere in white list una pagina intera con un click, senza alcun bisogno di consentire qualunque nuovo elemento che appare sulla pagina.
+Il sistema di filtri di Crossbar utilizza una logica di priorità per valutare cosa viene bloccato/permesso, secondo le celle che sono in black o white list. Per esempio, questo permette di mettere in white list una pagina intera con un click, senza alcun bisogno di consentire qualunque nuovo elemento che appare sulla pagina.
 
 Tutte le regole hanno un loro specifico campo di applicazione. Per esempio, si può bloccare 'facebook.com' e 'facebook.net' ovunque eccetto quando si visita una pagina su 'www.facebook.com'. in questo modo Facebook non è in grado di costruire un profilo delle abitudini di navigazione.
 
@@ -88,6 +88,6 @@ Questa estensione è inoltre utile se volete accelerare la vostra navigazione, b
 
 =====
 
-CODICE SORGENTE: https://github.com/gorhill/uMatrix (GPLv3)
+CODICE SORGENTE: https://github.com/dmolik/crossbar (GPLv3)
 
-CHANGE LOG: https://github.com/gorhill/uMatrix/releases
+CHANGE LOG: https://github.com/dmolik/crossbar/releases

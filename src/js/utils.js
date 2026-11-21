@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a Chromium browser extension to black/white list requests.
+    Crossbar - a Chromium browser extension to black/white list requests.
     Copyright (C) 2014-2018 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -16,14 +16,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 'use strict';
 
 /******************************************************************************/
 
-µMatrix.gotoExtensionURL = function(details) {
+Crossbar.gotoExtensionURL = function(details) {
     if ( details.url.startsWith('logger-ui.html') ) {
         if ( details.shiftKey ) {
             this.changeUserSettings(
@@ -53,13 +53,13 @@
 
 /******************************************************************************/
 
-µMatrix.LineIterator = function(text, offset) {
+Crossbar.LineIterator = function(text, offset) {
     this.text = text;
     this.textLen = this.text.length;
     this.offset = offset || 0;
 };
 
-µMatrix.LineIterator.prototype = {
+Crossbar.LineIterator.prototype = {
     next: function() {
         var lineEnd = this.text.indexOf('\n', this.offset);
         if ( lineEnd === -1 ) {
@@ -92,7 +92,7 @@
 
 /******************************************************************************/
 
-µMatrix.toMap = function(input) {
+Crossbar.toMap = function(input) {
     if ( input instanceof Map ) {
         return input;
     }
@@ -112,7 +112,7 @@
 
 /******************************************************************************/
 
-µMatrix.arraysIntersect = function(a1, a2) {
+Crossbar.arraysIntersect = function(a1, a2) {
     for ( let v of a1 ) {
         if ( a2.indexOf(v) !== -1 ) { return true; }
     }
@@ -132,7 +132,7 @@
 //   JSON string. The fallback can be removed once min supported version is
 //   above 59.
 
-µMatrix.base64 = new (class {
+Crossbar.base64 = new (class {
     constructor() {
         this.valToDigit = new Uint8Array(64);
         this.digitToVal = new Uint8Array(128);
@@ -228,7 +228,7 @@
 
 /******************************************************************************/
 
-µMatrix.fireDOMEvent = function(name) {
+Crossbar.fireDOMEvent = function(name) {
     if (
         self.dispatchEvent instanceof Function &&
         self.CustomEvent instanceof Function

@@ -31,7 +31,7 @@
 
 'use strict';
 
-// uMatrix: wrapped in a block and exposed as `self.publicSuffixList` so that
+// Crossbar: wrapped in a block and exposed as `self.publicSuffixList` so that
 // it can be loaded as a classic script (background page, service worker,
 // extension pages) instead of an ES module.
 {

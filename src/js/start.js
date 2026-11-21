@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a browser extension to black/white list requests.
+    Crossbar - a browser extension to black/white list requests.
     Copyright (C) 2014-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 'use strict';
@@ -24,33 +24,33 @@
 /******************************************************************************/
 
 (async ( ) => {
-    const µm = µMatrix;
+    const xb = Crossbar;
 
     await vAPI.localStorage.start();
 
     await Promise.all([
-        µm.loadRawSettings(),
-        µm.loadUserSettings(),
+        xb.loadRawSettings(),
+        xb.loadUserSettings(),
     ]);
     log.info(`User settings ready ${Date.now()-vAPI.T0} ms after launch`);
 
-    const cacheBackend = await µm.cacheStorage.select(
-        µm.rawSettings.cacheStorageAPI
+    const cacheBackend = await xb.cacheStorage.select(
+        xb.rawSettings.cacheStorageAPI
     );
     log.info(`Backend storage for cache will be ${cacheBackend}`);
 
     const shouldWASM =
         vAPI.canWASM === true &&
-        µm.rawSettings.disableWebAssembly !== true;
+        xb.rawSettings.disableWebAssembly !== true;
     if ( shouldWASM ) {
         await Promise.all([
-            µm.HNTrieContainer.enableWASM(),
+            xb.HNTrieContainer.enableWASM(),
             self.publicSuffixList.enableWASM(),
         ]);
         log.info(`WASM modules ready ${Date.now()-vAPI.T0} ms after launch`);
     }
 
-    await µm.loadPublicSuffixList();
+    await xb.loadPublicSuffixList();
     log.info(`PSL ready ${Date.now()-vAPI.T0} ms after launch`);
 
     {
@@ -61,50 +61,50 @@
             );
         } catch(ex) {
         }
-        µm.ubiquitousBlacklist = new µm.HNTrieContainer(trieDetails);
+        xb.ubiquitousBlacklist = new xb.HNTrieContainer(trieDetails);
         if ( shouldWASM ) {
-            µm.ubiquitousBlacklist.initWASM();
+            xb.ubiquitousBlacklist.initWASM();
         }
     }
     log.info(`Ubiquitous block rules container ready ${Date.now()-vAPI.T0} ms after launch`);
 
     await Promise.all([
-        µm.loadMatrix(),
-        µm.loadHostsFiles(),
+        xb.loadMatrix(),
+        xb.loadHostsFiles(),
     ]);
     log.info(`All rules ready ${Date.now()-vAPI.T0} ms after launch`);
 
     {
         const pageStore =
-            µm.pageStoreFactory(µm.tabContextManager.mustLookup(vAPI.noTabId));
+            xb.pageStoreFactory(xb.tabContextManager.mustLookup(vAPI.noTabId));
         pageStore.title = vAPI.i18n('statsPageDetailedBehindTheScenePage');
-        µm.pageStores.set(vAPI.noTabId, pageStore);
+        xb.pageStores.set(vAPI.noTabId, pageStore);
     }
 
     const tabs = await vAPI.tabs.query({ url: '<all_urls>' });
     if ( Array.isArray(tabs) ) {
         for ( const tab of tabs ) {
-            µm.tabContextManager.push(tab.id, tab.url, 'newURL');
-            µm.bindTabToPageStats(tab.id);
-            µm.setPageStoreTitle(tab.id, tab.title);
+            xb.tabContextManager.push(tab.id, tab.url, 'newURL');
+            xb.bindTabToPageStats(tab.id);
+            xb.setPageStoreTitle(tab.id, tab.title);
         }
     }
     log.info(`Tab stores ready ${Date.now()-vAPI.T0} ms after launch`);
 
-    if ( µm.dnr !== undefined ) {
-        await µm.dnr.start();
+    if ( xb.dnr !== undefined ) {
+        await xb.dnr.start();
         log.info(`declarativeNetRequest rules ready ${Date.now()-vAPI.T0} ms after launch`);
     }
 
-    µm.webRequest.start();
+    xb.webRequest.start();
 
-    µm.loadRecipes();
+    xb.loadRecipes();
 
     // https://github.com/uBlockOrigin/uMatrix-issues/issues/63
     //   Ensure user settings are fully loaded before launching the
     //   asset updater.
-    µm.assets.addObserver(µm.assetObserver.bind(µm));
-    µm.scheduleAssetUpdater(µm.userSettings.autoUpdate ? 7 * 60 * 1000 : 0);
+    xb.assets.addObserver(xb.assetObserver.bind(xb));
+    xb.scheduleAssetUpdater(xb.userSettings.autoUpdate ? 7 * 60 * 1000 : 0);
 })();
 
 /******************************************************************************/

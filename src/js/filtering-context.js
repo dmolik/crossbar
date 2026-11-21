@@ -23,8 +23,8 @@
 
 /******************************************************************************/
 
-µMatrix.FilteringContext = function(other) {
-    if ( other instanceof µMatrix.FilteringContext ) {
+Crossbar.FilteringContext = function(other) {
+    if ( other instanceof Crossbar.FilteringContext ) {
         return this.fromFilteringContext(other);
     }
     this.tstamp = 0;
@@ -46,7 +46,7 @@
     this.filter = undefined;
 };
 
-µMatrix.FilteringContext.prototype = {
+Crossbar.FilteringContext.prototype = {
     requestTypeNormalizer: {
         font          : 'css',
         image         : 'image',
@@ -62,7 +62,7 @@
         xmlhttprequest: 'fetch'
     },
     fromTabId: function(tabId) {
-        const tabContext = µMatrix.tabContextManager.mustLookup(tabId);
+        const tabContext = Crossbar.tabContextManager.mustLookup(tabId);
         this.tabOrigin = tabContext.origin;
         this.tabHostname = tabContext.rootHostname;
         this.tabDomain = tabContext.rootDomain;
@@ -76,7 +76,7 @@
         this.type = this.requestTypeNormalizer[details.type] || 'other';
         const tabId = details.tabId;
         if ( tabId > 0 && this.type === 'doc' ) {
-            µMatrix.tabContextManager.push(tabId, details.url);
+            Crossbar.tabContextManager.push(tabId, details.url);
         }
         this.fromTabId(tabId);
         this.realm = '';
@@ -98,7 +98,7 @@
             }
         } else if ( details.documentUrl !== undefined ) {
             const origin = this.originFromURI(
-                µMatrix.normalizePageURL(0, details.documentUrl)
+                Crossbar.normalizePageURL(0, details.documentUrl)
             );
             this.setDocOrigin(origin).setTabOrigin(origin);
         } else if (
@@ -132,7 +132,7 @@
         return this;
     },
     duplicate: function() {
-        return (new µMatrix.FilteringContext(this));
+        return (new Crossbar.FilteringContext(this));
     },
     setRealm: function(a) {
         this.realm = a;
@@ -231,7 +231,7 @@
     },
     getTabOrigin: function() {
         if ( this.tabOrigin === undefined ) {
-            const tabContext = µMatrix.tabContextManager.mustLookup(this.tabId);
+            const tabContext = Crossbar.tabContextManager.mustLookup(this.tabId);
             this.tabOrigin = tabContext.origin;
             this.tabHostname = tabContext.rootHostname;
             this.tabDomain = tabContext.rootDomain;
@@ -300,11 +300,11 @@
         if ( this.tabDomain === undefined ) {
             void this.getTabDomain();
         }
-        µMatrix.logger.writeOne(this);
+        Crossbar.logger.writeOne(this);
     },
-    originFromURI: µMatrix.URI.originFromURI,
+    originFromURI: Crossbar.URI.originFromURI,
     hostnameFromURI: vAPI.hostnameFromURI,
     domainFromHostname: vAPI.domainFromHostname,
 };
 
-µMatrix.filteringContext = new µMatrix.FilteringContext();
+Crossbar.filteringContext = new Crossbar.FilteringContext();

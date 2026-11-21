@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a browser extension to black/white list requests.
+    Crossbar - a browser extension to black/white list requests.
     Copyright (C) 2014-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -16,10 +16,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
-/* global punycode, uDom, uMatrixScopeWidget */
+/* global punycode, uDom, crossbarScopeWidget */
 
 'use strict';
 
@@ -1015,7 +1015,7 @@ const makeMenu = function() {
     makeMatrixGroup4(groupStats[4]);
     endMatrixUpdate();
 
-    uMatrixScopeWidget.init(
+    crossbarScopeWidget.init(
         matrixSnapshot.domain,
         matrixSnapshot.hostname,
         matrixSnapshot.scope
@@ -1170,7 +1170,7 @@ const revertMatrix = function() {
 // Buttons which are affected by any changes in the matrix
 
 const updateMatrixButtons = function() {
-    uMatrixScopeWidget.update(matrixSnapshot.scope);
+    crossbarScopeWidget.update(matrixSnapshot.scope);
     updateMatrixSwitches();
     updatePersistButton();
 };
@@ -1508,7 +1508,7 @@ matrixCellHotspots = uDom('#cellHotspots').detach();
 uDom('body')
     .on('mouseenter', '.matCell', mouseenterMatrixCellHandler)
     .on('mouseleave', '.matCell', mouseleaveMatrixCellHandler);
-window.addEventListener('uMatrixScopeWidgetChange', scopeChangeHandler);
+window.addEventListener('crossbarScopeWidgetChange', scopeChangeHandler);
 uDom('#buttonMtxSwitches').on('click', function(ev) {
     dropDownMenuShow(ev.target);
 });

@@ -1,10 +1,10 @@
-uMatrix : Un parefeu matriciel configurable à la volée, avec de nombreux outils d'amélioration de la vie privée en ligne. Pour utilisateurs avancés.
+Crossbar : Un parefeu matriciel configurable à la volée, avec de nombreux outils d'amélioration de la vie privée en ligne. Pour utilisateurs avancés.
 
 *Pour utilisateurs avancés*
 
-uMatrix vous donne les pleins pouvoirs sur votre navigateur. Vous contrôlez où il se connecte, ce qu'il télécharge, et ce qu'il exécute. Personne d'autre ne décidera pour vous. Vous avez toutes les cartes en main pour protéger votre confidentialité.
+Crossbar vous donne les pleins pouvoirs sur votre navigateur. Vous contrôlez où il se connecte, ce qu'il télécharge, et ce qu'il exécute. Personne d'autre ne décidera pour vous. Vous avez toutes les cartes en main pour protéger votre confidentialité.
 
-Après installation, uMatrix fonctionne en mode "Blocage total/Permissions exceptionnelles", ce qui veut dire que les sites Web ayant besoin de contenus tiers sont susceptibles de ne pas fonctionner correctement. En deux clics, uMatrix peut fonctionner en mode "Autorisation totale/Blocage exceptionnel", ce qui en principe n'empêchera pas les sites Web de fonctionner. Pour plus d'informations sur ce sujet, consultez cette page en Anglais : https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views .
+Après installation, Crossbar fonctionne en mode "Blocage total/Permissions exceptionnelles", ce qui veut dire que les sites Web ayant besoin de contenus tiers sont susceptibles de ne pas fonctionner correctement. En deux clics, Crossbar peut fonctionner en mode "Autorisation totale/Blocage exceptionnel", ce qui en principe n'empêchera pas les sites Web de fonctionner. Pour plus d'informations sur ce sujet, consultez cette page en Anglais : https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views .
 
 * Consultez TOUTES les tentatives de connexions distantes, échouées ou réussies, selon qu'elles soient bloquées ou autorisées (c'est vous qui décidez).
 
@@ -14,7 +14,7 @@ Après installation, uMatrix fonctionne en mode "Blocage total/Permissions excep
 
 * Vous n'avez pas à vous reposer sur une unique liste prédéfinie de blocage (dans laquelle il manquerait beaucoup d'éléments), avec la possibilité de cumuler l'emploi de plusieurs listes de ce genre, vous avez entièrement le contrôle.
 
-* Facilité d'utilisation : uMatrix vous laisse aisément mettre en liste blanche/noire des requêtes réseau provenant d'une page Web, d'après une matrice qui vous permet de manipuler en quelques clics de souris :
+* Facilité d'utilisation : Crossbar vous laisse aisément mettre en liste blanche/noire des requêtes réseau provenant d'une page Web, d'après une matrice qui vous permet de manipuler en quelques clics de souris :
 
 - Les noms de domaine (colonne de gauche)
   * de très spécifique
@@ -32,7 +32,7 @@ Après installation, uMatrix fonctionne en mode "Blocage total/Permissions excep
 
 En un clic, vous pouvez mettre en liste noire/blanche une simple cellule, une ligne entière, un ensemble de lignes, une colonne entière, ou toute la matrice.
 
-Le moteur de filtrage de uMatrix utilise une logique de priorité pour évaluer ce qui doit être bloqué/autorisé d'après l'état des cellules (liste noire/blanche). Par exemple, cela vous permet de mettre en liste blanche toute une page Web en un clic, sans avoir à mettre en liste blanche de manière répétitive toute nouvelle donnée apparaissant sur la page.
+Le moteur de filtrage de Crossbar utilise une logique de priorité pour évaluer ce qui doit être bloqué/autorisé d'après l'état des cellules (liste noire/blanche). Par exemple, cela vous permet de mettre en liste blanche toute une page Web en un clic, sans avoir à mettre en liste blanche de manière répétitive toute nouvelle donnée apparaissant sur la page.
 
 Toutes les règles sont contextualisées. Par exemple, vous pouvez bloquer "facebook.com" et "facebook.net" partout sauf lorsque vous visitez une page sur "www.facebook.com". Ainsi Facebook ne pourrait pas définir un profil de vous en se basant sur vos habitudes de navigation.
 
@@ -76,6 +76,6 @@ Cette extension est aussi utile si vous souhaitez accélérer votre navigation, 
 
 PROBLÈMES (Page en Anglais) : https://github.com/gorhill/uMatrix/issues
 
-CODE SOURCE (Licence GPLv3, page en Anglais) : https://github.com/gorhill/uMatrix .
+CODE SOURCE (Licence GPLv3, page en Anglais) : https://github.com/dmolik/crossbar .
 
 JOURNAL DES CHANGEMENTS (Page en Anglais) : https://github.com/gorhill/umatrix/releases .

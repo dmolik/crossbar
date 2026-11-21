@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "uMatrix",
-    "short_name": "uMatrix",
+    "name": "Crossbar",
+    "short_name": "Crossbar",
     "version": "1.5.0",
     "description": "__MSG_extShortDesc__",
     "icons": {
@@ -12,7 +12,7 @@
         "default_icon": {
             "19": "img/browsericons/icon19-19.png"
         },
-        "default_title": "uMatrix",
+        "default_title": "Crossbar",
         "default_popup": "popup.html"
     },
     "author": "Raymond Hill",
@@ -37,7 +37,7 @@
         "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
     },
     "default_locale": "en",
-    "homepage_url": "https://github.com/dmolik/uMatrix",
+    "homepage_url": "https://github.com/dmolik/crossbar",
     "host_permissions": [
         "<all_urls>"
     ],

@@ -10,7 +10,7 @@
 		"log": false,
 		"webext": false,
 		"vAPI": false,
-		"µMatrix": false
+		"Crossbar": false
 	},
 	"laxbreak": true,
 	"strict": "global",

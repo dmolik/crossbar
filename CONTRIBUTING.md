@@ -1,5 +1,5 @@
 ### Submitting issues
 
-Submit on <https://github.com/uBlockOrigin/uMatrix-issues/issues>.
+Submit on <https://github.com/dmolik/crossbar/issues>.
 
-Issue tracker here is read-only for non-[prior contributors](https://github.com/gorhill/uMatrix/graphs/contributors).
+Sites that break because Crossbar blocks what it is configured to block are not bugs: use the logger to find out what to allow.

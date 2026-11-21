@@ -32,7 +32,7 @@
 
 **/
 
-µMatrix.lz4Codec = (function() {         // >>>> Start of private namespace
+Crossbar.lz4Codec = (function() {         // >>>> Start of private namespace
 
 /******************************************************************************/
 
@@ -44,7 +44,7 @@ let ttlTimer;
 let ttlDelay = 60000;
 
 const init = function() {
-    ttlDelay = µMatrix.rawSettings.autoUpdateAssetFetchPeriod * 1000 + 15000;
+    ttlDelay = Crossbar.rawSettings.autoUpdateAssetFetchPeriod * 1000 + 15000;
     if ( lz4CodecInstance === null ) {
         return Promise.resolve(null);
     }
@@ -53,7 +53,7 @@ const init = function() {
     }
     if ( pendingInitialization === undefined ) {
         let flavor;
-        if ( µMatrix.rawSettings.disableWebAssembly === true ) {
+        if ( Crossbar.rawSettings.disableWebAssembly === true ) {
             flavor = 'js';
         }
         pendingInitialization = lz4BlockCodec.createInstance(flavor)

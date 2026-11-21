@@ -1,13 +1,13 @@
-! uMatrix: Ruleset recipes 1.0
+! Crossbar: Ruleset recipes 1.0
 ! Title: Rulesets for English websites
-! Maintainer: uMatrix
+! Maintainer: Crossbar
 !
 ! Lines starting with character "!" are ignored.
 ! Character "_" is an alias for "currently selected scope".
 ! An empty line MUST be used to separate distinct ruleset recipes.
 !
 ! Please contribute ruleset recipes for the benefit of all other users:
-! https://github.com/dmolik/uMatrix/tree/master/assets/umatrix
+! https://github.com/dmolik/crossbar/tree/master/assets/crossbar
 
 
 4chan

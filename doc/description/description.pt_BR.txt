@@ -1,8 +1,8 @@
-µMatrix: É um firewall baseado em matrizes, com várias ferramentas para melhorar a privacidade. Para usuários avançados.
+Crossbar: É um firewall baseado em matrizes, com várias ferramentas para melhorar a privacidade. Para usuários avançados.
 
-µMatrix põe você no total controle de onde seus navegadores são permitidos a conectar, que tipo de dados é permitido baixar, e o que é permitido executar. Ninguém mais decide por você: Você escolhe. Você está com total controle de sua privacidade.
+Crossbar põe você no total controle de onde seus navegadores são permitidos a conectar, que tipo de dados é permitido baixar, e o que é permitido executar. Ninguém mais decide por você: Você escolhe. Você está com total controle de sua privacidade.
 
-Por padrão, µMatrix funciona de modo relaxante bloqueia-tudo/permite-excepcionalmente, significando que sites da web que requerem scripts de terceiros estão "quebrados". Com dois cliques, µMatrix  pode ser configurado para trabalhar no modo permite-tudo/bloqueia-excepcionalmente, que geralmente não irá "quebrar" sites da web. Veja em https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Dois pontos de vista opostos para maiores detalhes sobre este tópico.
+Por padrão, Crossbar funciona de modo relaxante bloqueia-tudo/permite-excepcionalmente, significando que sites da web que requerem scripts de terceiros estão "quebrados". Com dois cliques, Crossbar  pode ser configurado para trabalhar no modo permite-tudo/bloqueia-excepcionalmente, que geralmente não irá "quebrar" sites da web. Veja em https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Dois pontos de vista opostos para maiores detalhes sobre este tópico.
 
 Apesar do mito do quê "Navegadores baseado no Chromium-based não podem realmente bloquear javascript", veja: https://github.com/gorhill/httpswitchboard/wiki/Blocking-javascript-execution-reliably-in-Chromium-based-browsers. Resumo: Sim, javascript pode ser bloqueado com qualidade no Chromium.
 
@@ -32,7 +32,7 @@ Apesar do mito do quê "Navegadores baseado no Chromium-based não podem realmen
 
 Você pode adicionar à lista negra/branca uma simples célula, uma linha inteira, um grupo de linhas, uma coluna inteira, ou toda matrix com um só clique.
 
-µMatrix é um motor de filtragem que usa a precedência lógica para avaliar o que é bloqueado/permitido de acordo com as células que estão na lista negra/branca. Por exemplo, isso permite que você adiciona à lista branca uma página inteira com um clique, sem ter que repetidamente adicionando à lista branca, sempre que novos dados aparecem na página.
+Crossbar é um motor de filtragem que usa a precedência lógica para avaliar o que é bloqueado/permitido de acordo com as células que estão na lista negra/branca. Por exemplo, isso permite que você adiciona à lista branca uma página inteira com um clique, sem ter que repetidamente adicionando à lista branca, sempre que novos dados aparecem na página.
 
 Todas as regras são escopo. Por exemplo, você pode bloquear ` facebook.net` e `facebook.com` em todos os lugares, exceto quando visita uma página no `www.facebook.com`. Desta forma, o Facebook não vai ser capaz de construir um perfil de seus hábitos de navegação.
 
@@ -88,6 +88,6 @@ Esta extensão também é útil se você deseja acelerar sua navegação, bloque
 
 =====
 
-CÓDIGO FONTE: https://github.com/gorhill/uMatrix (GPLv3)
+CÓDIGO FONTE: https://github.com/dmolik/crossbar (GPLv3)
 
-CHANGE LOG: https://github.com/gorhill/uMatrix/releases
+CHANGE LOG: https://github.com/dmolik/crossbar/releases

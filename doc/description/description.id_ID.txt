@@ -1,8 +1,8 @@
-µMatrix: Firewall tunjuk-dan-klik berbasis matriks, dengan banyak perkakas privasi yang ditingkatkan. Untuk pengguna tingkat lanjut.
+Crossbar: Firewall tunjuk-dan-klik berbasis matriks, dengan banyak perkakas privasi yang ditingkatkan. Untuk pengguna tingkat lanjut.
 
-µMatrix memberi anda kontrol penuh ke mana peramban anda diizinkan terhubung, tipe data apa yang diizinkan untuk diunduh, dan apa yang diizinkan untuk dieksekusi. Tidak seorangpun memutuskan untuk anda: Anda yang memilih. Anda mengontrol penuh privasi anda sendiri.
+Crossbar memberi anda kontrol penuh ke mana peramban anda diizinkan terhubung, tipe data apa yang diizinkan untuk diunduh, dan apa yang diizinkan untuk dieksekusi. Tidak seorangpun memutuskan untuk anda: Anda yang memilih. Anda mengontrol penuh privasi anda sendiri.
 
-Secara bawaan, µMatrix bekerja dalam mode blokir-semua/izinkan-sebagian yang agak ketat, artinya situs web yang membutuhkan skrip pihak ketiga besar kemungkinan menjadi "rusak". Dengan dua klik, µMatrix dapat diatur untuk bekerja dalam mode izinkan-semua/blokir-sebagian, yang pada umumnya tidak akan membuat rusak situs web. Lihat https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views untuk penjelasan lebih rinci perihal topik ini.
+Secara bawaan, Crossbar bekerja dalam mode blokir-semua/izinkan-sebagian yang agak ketat, artinya situs web yang membutuhkan skrip pihak ketiga besar kemungkinan menjadi "rusak". Dengan dua klik, Crossbar dapat diatur untuk bekerja dalam mode izinkan-semua/blokir-sebagian, yang pada umumnya tidak akan membuat rusak situs web. Lihat https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views untuk penjelasan lebih rinci perihal topik ini.
 
 Mengenai mitos "Peramban barbasis Chromium tidak dapat dengan handal memblokir JavaScript", lihat: https://github.com/gorhill/httpswitchboard/wiki/Blocking-javascript-execution-reliably-in-Chromium-based-browsers. Ringkasnya: Ya, JavaScript dapat diblokir dengan handal di Chromium.
 
@@ -14,7 +14,7 @@ Mengenai mitos "Peramban barbasis Chromium tidak dapat dengan handal memblokir J
 
 * Anda tidak harus bergantung hanya pada daftar-hitam tertentu saja (dengan alasan banyak entri yang hilang) selain tidak ada lagi yang dapat diblokir: Anda dalam kontrol penuh.
 
-* Mudah dalam penggunaan: µMatrix memungkinkan anda dengan mudah mendaftar-putih/hitamkan permintaan jaringan yang berasal dari halaman web menurut matriks tunjuk-dan-klik:
+* Mudah dalam penggunaan: Crossbar memungkinkan anda dengan mudah mendaftar-putih/hitamkan permintaan jaringan yang berasal dari halaman web menurut matriks tunjuk-dan-klik:
 
 - nama ranah (kolom kiri)
   * dari sangat spesifik
@@ -32,7 +32,7 @@ Mengenai mitos "Peramban barbasis Chromium tidak dapat dengan handal memblokir J
 
 Anda dapat mendaftar-hitam/putihkan satu sel, seluruh baris, satu grup dari baris, seluruh kolom, atau seluruh matriks hanya dengan satu klik.
 
-Mesin penyaringan µMatrix menggunakan logika tinggi untuk mengevaluasi apa yang diblokir/diizinkan sesuai dengan sel mana yang di daftar-hitam/putih. Sebagai contoh, hal ini memungkinkan anda mendaftar-putihkan seluruh halaman dengan satu klik, tanpa perlu berulang-ulang mendaftar-putihkan setiap data baru yang muncul di halaman.
+Mesin penyaringan Crossbar menggunakan logika tinggi untuk mengevaluasi apa yang diblokir/diizinkan sesuai dengan sel mana yang di daftar-hitam/putih. Sebagai contoh, hal ini memungkinkan anda mendaftar-putihkan seluruh halaman dengan satu klik, tanpa perlu berulang-ulang mendaftar-putihkan setiap data baru yang muncul di halaman.
 
 Mencakup semua aturan. Sebagai contoh, anda dapat memblokir `facebook.com` dan `facebook.net` di manapun kecuali ketika mengunjungi sebuah halaman di `www.facebook.com`. Dengan cara ini Facebook tidak akan bisa membangun profil mengenai kebiasaan penjelajahan anda.
 
@@ -88,6 +88,6 @@ Ekstensi ini juga berguna jika anda ingin mempercepat penjelajahan anda, sebagai
 
 =====
 
-KODE SUMBER: https://github.com/gorhill/uMatrix (GPLv3)
+KODE SUMBER: https://github.com/dmolik/crossbar (GPLv3)
 
-CATATAN PERUBAHAN: https://github.com/gorhill/uMatrix/releases
+CATATAN PERUBAHAN: https://github.com/dmolik/crossbar/releases

@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a Chromium browser extension to black/white list requests.
+    Crossbar - a Chromium browser extension to black/white list requests.
     Copyright (C) 2018 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 /* global punycode */
@@ -25,7 +25,7 @@
 
 /******************************************************************************/
 
-µMatrix.recipeManager = (function() {
+Crossbar.recipeManager = (function() {
     let rawRecipes = [];
     let recipeIdGenerator = 1;
     let recipeBook = new Map();
@@ -43,7 +43,7 @@
         if ( targetHostname !== '*' ) {
             let hn = srcHostname;
             if ( targetHostname.endsWith('.*') ) {
-                let domain = µMatrix.URI.domainFromHostname(hn);
+                let domain = Crossbar.URI.domainFromHostname(hn);
                 let pos = domain.indexOf('.');
                 if ( pos !== -1 ) {
                     hn = hn.slice(0, pos + hn.length - domain.length) + '.*';
@@ -93,7 +93,7 @@
     };
 
     const fromString = function(raw) {
-        const reValidRecipeFile = /^! uMatrix: Ruleset recipes [0-9.]+[\n\r]+/;
+        const reValidRecipeFile = /^! (?:Crossbar|uMatrix): Ruleset recipes [0-9.]+[\n\r]+/;
         const rawHeader = raw.slice(0, 1024);
         if ( reValidRecipeFile.test(rawHeader) === false ) { return; }
         const reComment = /^[!#]/;
@@ -101,7 +101,7 @@
         let recipeName,
             recipeCondition,
             recipeRuleset;
-        let lineIter = new µMatrix.LineIterator(raw);
+        let lineIter = new Crossbar.LineIterator(raw);
         for (;;) {
             let line = lineIter.next().trim();
             if ( line.length === 0 ) {
@@ -162,9 +162,9 @@
 
     api.apply = function(details) {
         const reComment = /^[!#]/;
-        const µm = µMatrix;
-        const tMatrix = µm.tMatrix;
-        const pMatrix = µm.pMatrix;
+        const xb = Crossbar;
+        const tMatrix = xb.tMatrix;
+        const pMatrix = xb.pMatrix;
         let mustPersist = false;
         for ( const rule of details.ruleset.split('\n') ) {
             if ( reComment.test(rule) ) { continue; }
@@ -199,7 +199,7 @@
             }
         }
         if ( mustPersist ) {
-            µm.saveMatrix();
+            xb.saveMatrix();
         }
     };
 
@@ -229,11 +229,11 @@
     };
 
     api.statuses = function(details) {
-        let pMatrix = µMatrix.pMatrix,
-            tMatrix = µMatrix.tMatrix;
+        let pMatrix = Crossbar.pMatrix,
+            tMatrix = Crossbar.tMatrix;
         let reComment = /^[!#]/;
         for ( let recipe of details.recipes ) {
-            let ruleIter = new µMatrix.LineIterator(recipe.ruleset);
+            let ruleIter = new Crossbar.LineIterator(recipe.ruleset);
             while ( ruleIter.eot() === false ) {
                 let rule = ruleIter.next();
                 if ( reComment.test(rule) ) { continue; }

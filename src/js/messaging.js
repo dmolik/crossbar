@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a browser extension to black/white list requests.
+    Crossbar - a browser extension to black/white list requests.
     Copyright (C) 2014-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 /* globals publicSuffixList */
@@ -32,13 +32,13 @@
 {
 // >>>>> start of local scope
 
-const µm = µMatrix;
+const xb = Crossbar;
 
 const onMessage = function(request, sender, callback) {
     // Async
     switch ( request.what ) {
     case 'getAssetContent':
-        µm.assets.get(request.url, {
+        xb.assets.get(request.url, {
             dontCache: true,
         }).then(response => {
             callback(response);
@@ -46,7 +46,7 @@ const onMessage = function(request, sender, callback) {
         return;
 
     case 'selectAssets':
-        µm.selectAssets(request).then(response => {
+        xb.selectAssets(request).then(response => {
             callback(response);
         });
         return;
@@ -60,7 +60,7 @@ const onMessage = function(request, sender, callback) {
 
     switch ( request.what ) {
     case 'blacklistMatrixCell':
-        µm.tMatrix.blacklistCell(
+        xb.tMatrix.blacklistCell(
             request.srcHostname,
             request.desHostname,
             request.type
@@ -68,12 +68,12 @@ const onMessage = function(request, sender, callback) {
         break;
 
     case 'forceReloadTab':
-        µm.forceReload(request.tabId, request.bypassCache);
+        xb.forceReload(request.tabId, request.bypassCache);
         break;
 
     case 'forceUpdateAssets':
-        µm.scheduleAssetUpdater(0);
-        µm.assets.updateStart({ delay: 2000 });
+        xb.scheduleAssetUpdater(0);
+        xb.assets.updateStart({ delay: 2000 });
         break;
 
     case 'getCellColors':
@@ -81,12 +81,12 @@ const onMessage = function(request, sender, callback) {
         const tColors = [];
         const pColors = [];
         for ( let i = 0, n = ruleParts.length; i < n; i += 3 ) {
-            tColors.push(µm.tMatrix.evaluateCellZXY(
+            tColors.push(xb.tMatrix.evaluateCellZXY(
                 ruleParts[i+0],
                 ruleParts[i+1],
                 ruleParts[i+2]
             ));
-            pColors.push(µm.pMatrix.evaluateCellZXY(
+            pColors.push(xb.pMatrix.evaluateCellZXY(
                 ruleParts[i+0],
                 ruleParts[i+1],
                 ruleParts[i+2]
@@ -106,21 +106,21 @@ const onMessage = function(request, sender, callback) {
 
     case 'getUserSettings':
         response = {
-            userSettings: µm.userSettings,
+            userSettings: xb.userSettings,
             matrixSwitches: {
-                'https-strict': µm.pMatrix.evaluateSwitch('https-strict', '*') === 1,
-                'referrer-spoof': µm.pMatrix.evaluateSwitch('referrer-spoof', '*') === 1,
-                'noscript-spoof': µm.pMatrix.evaluateSwitch('noscript-spoof', '*') === 1
+                'https-strict': xb.pMatrix.evaluateSwitch('https-strict', '*') === 1,
+                'referrer-spoof': xb.pMatrix.evaluateSwitch('referrer-spoof', '*') === 1,
+                'noscript-spoof': xb.pMatrix.evaluateSwitch('noscript-spoof', '*') === 1
             }
         };
         break;
 
     case 'gotoExtensionURL':
-        µm.gotoExtensionURL(request);
+        xb.gotoExtensionURL(request);
         break;
 
     case 'graylistMatrixCell':
-        µm.tMatrix.graylistCell(
+        xb.tMatrix.graylistCell(
             request.srcHostname,
             request.desHostname,
             request.type
@@ -128,7 +128,7 @@ const onMessage = function(request, sender, callback) {
         break;
 
     case 'mustBlock':
-        response = µm.mustBlock(
+        response = xb.mustBlock(
             request.scope,
             request.hostname,
             request.type
@@ -136,31 +136,31 @@ const onMessage = function(request, sender, callback) {
         break;
 
     case 'rulesetRevert':
-        µm.tMatrix.copyRuleset(request.entries, µm.pMatrix, true);
+        xb.tMatrix.copyRuleset(request.entries, xb.pMatrix, true);
         break;
 
     case 'rulesetPersist':
-        if ( µm.pMatrix.copyRuleset(request.entries, µm.tMatrix, true) ) {
-            µm.saveMatrix();
+        if ( xb.pMatrix.copyRuleset(request.entries, xb.tMatrix, true) ) {
+            xb.saveMatrix();
         }
         break;
 
     case 'readRawSettings':
-        response = µm.stringFromRawSettings();
+        response = xb.stringFromRawSettings();
         break;
 
     case 'reloadHostsFiles':
-        µm.reloadHostsFiles();
+        xb.reloadHostsFiles();
         break;
 
     case 'reloadRecipeFiles':
-        µm.loadRecipes(true);
+        xb.loadRecipes(true);
         break;
 
     case 'setMatrixSwitch':
-        µm.tMatrix.setSwitch(request.switchName, '*', request.state);
-        if ( µm.pMatrix.setSwitch(request.switchName, '*', request.state) ) {
-            µm.saveMatrix();
+        xb.tMatrix.setSwitch(request.switchName, '*', request.state);
+        if ( xb.pMatrix.setSwitch(request.switchName, '*', request.state) ) {
+            xb.saveMatrix();
         }
         break;
 
@@ -168,11 +168,11 @@ const onMessage = function(request, sender, callback) {
         if ( request.hasOwnProperty('value') === false ) {
             request.value = undefined;
         }
-        response = µm.changeUserSettings(request.name, request.value);
+        response = xb.changeUserSettings(request.name, request.value);
         break;
 
     case 'whitelistMatrixCell':
-        µm.tMatrix.whitelistCell(
+        xb.tMatrix.whitelistCell(
             request.srcHostname,
             request.desHostname,
             request.type
@@ -180,7 +180,7 @@ const onMessage = function(request, sender, callback) {
         break;
 
     case 'writeRawSettings':
-        µm.rawSettingsFromString(request.content);
+        xb.rawSettingsFromString(request.content);
         break;
 
     default:
@@ -205,33 +205,33 @@ vAPI.messaging.setup(onMessage);
 {
 // >>>>> start of local scope
 
-const µm = µMatrix;
+const xb = Crossbar;
 
 const RowSnapshot = function(srcHostname, desHostname, desDomain) {
     this.domain = desDomain;
-    this.temporary = µm.tMatrix.evaluateRowZXY(srcHostname, desHostname);
-    this.permanent = µm.pMatrix.evaluateRowZXY(srcHostname, desHostname);
+    this.temporary = xb.tMatrix.evaluateRowZXY(srcHostname, desHostname);
+    this.permanent = xb.pMatrix.evaluateRowZXY(srcHostname, desHostname);
     this.counts = RowSnapshot.counts.slice();
     this.totals = RowSnapshot.counts.slice();
 };
 
 RowSnapshot.counts = (( ) => {
     const aa = [];
-    for ( let i = 0, n = µm.Matrix.columnHeaderIndices.size; i < n; i++ ) {
+    for ( let i = 0, n = xb.Matrix.columnHeaderIndices.size; i < n; i++ ) {
         aa[i] = 0;
     }
     return aa;
 })();
 
 const matrixSnapshotFromPage = function(pageStore, details) {
-    const µmuser = µm.userSettings;
-    const headerIndices = µm.Matrix.columnHeaderIndices;
+    const xbuser = xb.userSettings;
+    const headerIndices = xb.Matrix.columnHeaderIndices;
 
     const r = {
         appVersion: vAPI.app.version,
         blockedCount: pageStore.perLoadBlockedRequestCount,
-        collapseAllDomains: µmuser.popupCollapseAllDomains,
-        collapseBlacklistedDomains: µmuser.popupCollapseBlacklistedDomains,
+        collapseAllDomains: xbuser.popupCollapseAllDomains,
+        collapseBlacklistedDomains: xbuser.popupCollapseBlacklistedDomains,
         diff: [],
         domain: pageStore.pageDomain,
         has3pReferrer: pageStore.has3pReferrer,
@@ -245,22 +245,22 @@ const matrixSnapshotFromPage = function(pageStore, details) {
         mtxCountModified: pageStore.mtxCountModifiedTime !== details.mtxCountModifiedTime,
         mtxContentModifiedTime: pageStore.mtxContentModifiedTime,
         mtxCountModifiedTime: pageStore.mtxCountModifiedTime,
-        pMatrixModified: µm.pMatrix.modifiedTime !== details.pMatrixModifiedTime,
-        pMatrixModifiedTime: µm.pMatrix.modifiedTime,
+        pMatrixModified: xb.pMatrix.modifiedTime !== details.pMatrixModifiedTime,
+        pMatrixModifiedTime: xb.pMatrix.modifiedTime,
         pSwitches: {},
         rows: {},
         rowCount: 0,
         scope: '*',
         tabId: pageStore.tabId,
-        tMatrixModified: µm.tMatrix.modifiedTime !== details.tMatrixModifiedTime,
-        tMatrixModifiedTime: µm.tMatrix.modifiedTime,
+        tMatrixModified: xb.tMatrix.modifiedTime !== details.tMatrixModifiedTime,
+        tMatrixModifiedTime: xb.tMatrix.modifiedTime,
         tSwitches: {},
         url: pageStore.pageUrl,
         userSettings: {
-            colorBlindFriendly: µmuser.colorBlindFriendly,
-            displayTextSize: µmuser.displayTextSize,
-            noTooltips: µmuser.noTooltips,
-            popupScopeLevel: µmuser.popupScopeLevel
+            colorBlindFriendly: xbuser.colorBlindFriendly,
+            displayTextSize: xbuser.displayTextSize,
+            noTooltips: xbuser.noTooltips,
+            popupScopeLevel: xbuser.popupScopeLevel
         }
     };
 
@@ -269,15 +269,15 @@ const matrixSnapshotFromPage = function(pageStore, details) {
         (details.scope === '*' || r.hostname.endsWith(details.scope))
     ) {
         r.scope = details.scope;
-    } else if ( µmuser.popupScopeLevel === 'site' ) {
+    } else if ( xbuser.popupScopeLevel === 'site' ) {
         r.scope = r.hostname;
-    } else if ( µmuser.popupScopeLevel === 'domain' ) {
+    } else if ( xbuser.popupScopeLevel === 'domain' ) {
         r.scope = r.domain;
     }
 
-    for ( const switchName of µm.Matrix.switchNames ) {
-        r.tSwitches[switchName] = µm.tMatrix.evaluateSwitchZ(switchName, r.scope);
-        r.pSwitches[switchName] = µm.pMatrix.evaluateSwitchZ(switchName, r.scope);
+    for ( const switchName of xb.Matrix.switchNames ) {
+        r.tSwitches[switchName] = xb.tMatrix.evaluateSwitchZ(switchName, r.scope);
+        r.pSwitches[switchName] = xb.pMatrix.evaluateSwitchZ(switchName, r.scope);
     }
 
     // These rows always exist
@@ -285,7 +285,7 @@ const matrixSnapshotFromPage = function(pageStore, details) {
     r.rows['1st-party'] = new RowSnapshot(r.scope, '1st-party', '1st-party');
     r.rowCount += 1;
 
-    const µmuri = µm.URI;
+    const xburi = xb.URI;
     const anyIndex = headerIndices.get('*');
 
     // Ensure that the current scope is also reported in the matrix. This may
@@ -304,7 +304,7 @@ const matrixSnapshotFromPage = function(pageStore, details) {
             reqHostname = r.hostname;
         }
         const reqType = rule.slice(pos + 1);
-        const reqDomain = µmuri.domainFromHostname(reqHostname) || reqHostname;
+        const reqDomain = xburi.domainFromHostname(reqHostname) || reqHostname;
 
         // We want rows of self and ancestors
         let desHostname = reqHostname;
@@ -332,28 +332,28 @@ const matrixSnapshotFromPage = function(pageStore, details) {
         row.totals[anyIndex] += count;
     }
 
-    r.diff = µm.tMatrix.diff(µm.pMatrix, r.hostname, Object.keys(r.rows));
+    r.diff = xb.tMatrix.diff(xb.pMatrix, r.hostname, Object.keys(r.rows));
 
     return r;
 };
 
 const matrixSnapshotFromTabId = function(tabId, details) {
-    const pageStore = µm.pageStoreFromTabId(tabId);
+    const pageStore = xb.pageStoreFromTabId(tabId);
     if ( pageStore === null ) { return 'ENOTFOUND'; }
     return matrixSnapshotFromPage(pageStore, details);
 };
 
 const matrixSnapshotFromRule = function(rule, details) {
-    const µmuser = µm.userSettings;
-    const headerIndices = µm.Matrix.columnHeaderIndices;
+    const xbuser = xb.userSettings;
+    const headerIndices = xb.Matrix.columnHeaderIndices;
     const [ srchn, deshn, type ] = rule.trim().split(/\s+/);
     const now = Date.now();
 
     const r = {
         appVersion: vAPI.app.version,
         blockedCount: 0,
-        collapseAllDomains: µmuser.popupCollapseAllDomains,
-        collapseBlacklistedDomains: µmuser.popupCollapseBlacklistedDomains,
+        collapseAllDomains: xbuser.popupCollapseAllDomains,
+        collapseBlacklistedDomains: xbuser.popupCollapseBlacklistedDomains,
         diff: [],
         domain: vAPI.domainFromHostname(srchn),
         headerIndices: Array.from(headerIndices),
@@ -362,21 +362,21 @@ const matrixSnapshotFromRule = function(rule, details) {
         mtxCountModified: false,
         mtxContentModifiedTime: now,
         mtxCountModifiedTime: now,
-        pMatrixModified: µm.pMatrix.modifiedTime !== details.pMatrixModifiedTime,
-        pMatrixModifiedTime: µm.pMatrix.modifiedTime,
+        pMatrixModified: xb.pMatrix.modifiedTime !== details.pMatrixModifiedTime,
+        pMatrixModifiedTime: xb.pMatrix.modifiedTime,
         pSwitches: {},
         rows: {},
         rowCount: 0,
         scope: '*',
-        tMatrixModified: µm.tMatrix.modifiedTime !== details.tMatrixModifiedTime,
-        tMatrixModifiedTime: µm.tMatrix.modifiedTime,
+        tMatrixModified: xb.tMatrix.modifiedTime !== details.tMatrixModifiedTime,
+        tMatrixModifiedTime: xb.tMatrix.modifiedTime,
         tSwitches: {},
         url: `https://${srchn}/`,
         userSettings: {
-            colorBlindFriendly: µmuser.colorBlindFriendly,
-            displayTextSize: µmuser.displayTextSize,
-            noTooltips: µmuser.noTooltips,
-            popupScopeLevel: µmuser.popupScopeLevel
+            colorBlindFriendly: xbuser.colorBlindFriendly,
+            displayTextSize: xbuser.displayTextSize,
+            noTooltips: xbuser.noTooltips,
+            popupScopeLevel: xbuser.popupScopeLevel
         }
     };
 
@@ -385,15 +385,15 @@ const matrixSnapshotFromRule = function(rule, details) {
         (details.scope === '*' || r.hostname.endsWith(details.scope))
     ) {
         r.scope = details.scope;
-    } else if ( µmuser.popupScopeLevel === 'site' ) {
+    } else if ( xbuser.popupScopeLevel === 'site' ) {
         r.scope = r.hostname;
-    } else if ( µmuser.popupScopeLevel === 'domain' ) {
+    } else if ( xbuser.popupScopeLevel === 'domain' ) {
         r.scope = r.domain;
     }
 
-    for ( const switchName of µm.Matrix.switchNames ) {
-        r.tSwitches[switchName] = µm.tMatrix.evaluateSwitchZ(switchName, r.scope);
-        r.pSwitches[switchName] = µm.pMatrix.evaluateSwitchZ(switchName, r.scope);
+    for ( const switchName of xb.Matrix.switchNames ) {
+        r.tSwitches[switchName] = xb.tMatrix.evaluateSwitchZ(switchName, r.scope);
+        r.pSwitches[switchName] = xb.pMatrix.evaluateSwitchZ(switchName, r.scope);
     }
 
     // These rows always exist
@@ -401,7 +401,7 @@ const matrixSnapshotFromRule = function(rule, details) {
     r.rows['1st-party'] = new RowSnapshot(r.scope, '1st-party', '1st-party');
     r.rowCount += 1;
 
-    const µmuri = µm.URI;
+    const xburi = xb.URI;
     const anyIndex = headerIndices.get('*');
 
     const hostnameTypeCells = new Map();
@@ -412,7 +412,7 @@ const matrixSnapshotFromRule = function(rule, details) {
         const pos = rule.indexOf(' ');
         const reqHostname = rule.slice(0, pos);
         const reqType = rule.slice(pos + 1);
-        const reqDomain = µmuri.domainFromHostname(reqHostname) || reqHostname;
+        const reqDomain = xburi.domainFromHostname(reqHostname) || reqHostname;
 
         // We want rows of self and ancestors
         let desHostname = reqHostname;
@@ -440,7 +440,7 @@ const matrixSnapshotFromRule = function(rule, details) {
         row.totals[anyIndex] += count;
     }
 
-    r.diff = µm.tMatrix.diff(µm.pMatrix, r.hostname, Object.keys(r.rows));
+    r.diff = xb.tMatrix.diff(xb.pMatrix, r.hostname, Object.keys(r.rows));
 
     return r;
 };
@@ -448,11 +448,11 @@ const matrixSnapshotFromRule = function(rule, details) {
 const matrixSnapshotFromAny = async function(sender, details) {
     // Specific tab id?
     if ( typeof details.tabId === 'number' && details.tabId !== 0 ) {
-        const pageStore = µm.pageStoreFromTabId(details.tabId);
+        const pageStore = xb.pageStoreFromTabId(details.tabId);
         if ( pageStore === null ) { return 'ENOTFOUND'; }
         if (
-            µm.tMatrix.modifiedTime === details.tMatrixModifiedTime &&
-            µm.pMatrix.modifiedTime === details.pMatrixModifiedTime &&
+            xb.tMatrix.modifiedTime === details.tMatrixModifiedTime &&
+            xb.pMatrix.modifiedTime === details.pMatrixModifiedTime &&
             pageStore.mtxContentModifiedTime === details.mtxContentModifiedTime &&
             pageStore.mtxCountModifiedTime === details.mtxCountModifiedTime
         ) {
@@ -489,7 +489,7 @@ const onMessage = function(request, sender, callback) {
     // Async
     switch ( request.what ) {
     case 'fetchRecipes':
-        µm.recipeManager.fetch(
+        xb.recipeManager.fetch(
             request.srcHostname,
             request.desHostnames,
             callback
@@ -511,33 +511,33 @@ const onMessage = function(request, sender, callback) {
 
     switch ( request.what ) {
     case 'applyRecipe':
-        µm.recipeManager.apply(request);
+        xb.recipeManager.apply(request);
         break;
 
     case 'fetchRecipeCommitStatuses':
-        response = µm.recipeManager.statuses(request);
+        response = xb.recipeManager.statuses(request);
         break;
 
     case 'toggleMatrixSwitch':
-        µm.tMatrix.setSwitchZ(
+        xb.tMatrix.setSwitchZ(
             request.switchName,
             request.srcHostname,
-            µm.tMatrix.evaluateSwitchZ(request.switchName, request.srcHostname) === false
+            xb.tMatrix.evaluateSwitchZ(request.switchName, request.srcHostname) === false
         );
         break;
 
     case 'applyDiffToPermanentMatrix': // aka "persist"
-        if ( µm.pMatrix.applyDiff(request.diff, µm.tMatrix) ) {
-            µm.saveMatrix();
+        if ( xb.pMatrix.applyDiff(request.diff, xb.tMatrix) ) {
+            xb.saveMatrix();
         }
         break;
 
     case 'applyDiffToTemporaryMatrix': // aka "revert"
-        µm.tMatrix.applyDiff(request.diff, µm.pMatrix);
+        xb.tMatrix.applyDiff(request.diff, xb.pMatrix);
         break;
 
     case 'revertTemporaryMatrix':
-        µm.tMatrix.assign(µm.pMatrix);
+        xb.tMatrix.assign(xb.pMatrix);
         break;
 
     default:
@@ -566,7 +566,7 @@ vAPI.messaging.listen({
 {
 // >>>>> start of local scope
 
-const µm = µMatrix;
+const xb = Crossbar;
 
 /******************************************************************************/
 
@@ -574,12 +574,12 @@ const foundInlineCode = function(tabId, pageStore, details, type) {
     if ( pageStore === null ) { return; }
 
     const srcHn = pageStore.pageHostname;
-    const docOrigin = µm.URI.originFromURI(details.documentURI);
+    const docOrigin = xb.URI.originFromURI(details.documentURI);
     const desHn = vAPI.hostnameFromURI(docOrigin);
 
     let blocked = details.blocked;
     if ( blocked === undefined ) {
-        blocked = µm.mustBlock(srcHn, desHn, type);
+        blocked = xb.mustBlock(srcHn, desHn, type);
     }
 
     const mapTo = {
@@ -591,8 +591,8 @@ const foundInlineCode = function(tabId, pageStore, details, type) {
     //   Look-up here whether inline scripting is blocked for the frame.
     const desURL = `${docOrigin}/{inline_${mapTo[type]}}`;
     pageStore.recordRequest(type, desURL, blocked);
-    if ( µm.logger.enabled ) {
-        µm.filteringContext.duplicate()
+    if ( xb.logger.enabled ) {
+        xb.filteringContext.duplicate()
           .fromTabId(tabId)
           .setRealm('network')
           .setURL(desURL)
@@ -605,19 +605,19 @@ const foundInlineCode = function(tabId, pageStore, details, type) {
 /******************************************************************************/
 
 const contentScriptLocalStorageHandler = function(tabId, originURL) {
-    const tabContext = µm.tabContextManager.lookup(tabId);
+    const tabContext = xb.tabContextManager.lookup(tabId);
     if ( tabContext === null ) { return; }
 
     const srcHn = tabContext.rootHostname;
     const desHn = vAPI.hostnameFromURI(originURL);
-    const blocked = µm.mustBlock(srcHn, desHn, 'cookie');
+    const blocked = xb.mustBlock(srcHn, desHn, 'cookie');
 
-    const pageStore = µm.pageStoreFromTabId(tabId);
+    const pageStore = xb.pageStoreFromTabId(tabId);
     if ( pageStore !== null ) {
         const desURL = `${originURL}/{localStorage}`;
         pageStore.recordRequest('cookie', desURL, blocked);
-        if ( µm.logger.enabled ) {
-            µm.filteringContext.duplicate()
+        if ( xb.logger.enabled ) {
+            xb.filteringContext.duplicate()
               .fromTabId(tabId)
               .setRealm('network')
               .setURL(desURL)
@@ -627,9 +627,9 @@ const contentScriptLocalStorageHandler = function(tabId, originURL) {
         }
     }
 
-    const removeStorage = blocked && µm.userSettings.deleteLocalStorage;
+    const removeStorage = blocked && xb.userSettings.deleteLocalStorage;
     if ( removeStorage ) {
-        µm.localStorageRemovedCounter++;
+        xb.localStorageRemovedCounter++;
     }
 
     return removeStorage;
@@ -640,33 +640,33 @@ const contentScriptLocalStorageHandler = function(tabId, originURL) {
 // Evaluate many URLs against the matrix.
 
 const lookupBlockedCollapsibles = function(tabId, requests) {
-    if ( placeholdersReadTime < µm.rawSettingsWriteTime ) {
+    if ( placeholdersReadTime < xb.rawSettingsWriteTime ) {
         placeholders = undefined;
     }
 
     if ( placeholders === undefined ) {
         placeholders = {
-            frame: µm.rawSettings.framePlaceholder,
-            image: µm.rawSettings.imagePlaceholder
+            frame: xb.rawSettings.framePlaceholder,
+            image: xb.rawSettings.imagePlaceholder
         };
         if ( placeholders.frame ) {
             placeholders.frameDocument =
-                µm.rawSettings.framePlaceholderDocument.replace(
+                xb.rawSettings.framePlaceholderDocument.replace(
                     '{{bg}}',
-                    µm.rawSettings.framePlaceholderBackground !== 'default' ?
-                        µm.rawSettings.framePlaceholderBackground :
-                        µm.rawSettings.placeholderBackground
+                    xb.rawSettings.framePlaceholderBackground !== 'default' ?
+                        xb.rawSettings.framePlaceholderBackground :
+                        xb.rawSettings.placeholderBackground
                 );
         }
         if ( placeholders.image ) {
             placeholders.imageBorder =
-                µm.rawSettings.imagePlaceholderBorder !== 'default' ?
-                    µm.rawSettings.imagePlaceholderBorder :
-                    µm.rawSettings.placeholderBorder;
+                xb.rawSettings.imagePlaceholderBorder !== 'default' ?
+                    xb.rawSettings.imagePlaceholderBorder :
+                    xb.rawSettings.placeholderBorder;
             placeholders.imageBackground =
-                µm.rawSettings.imagePlaceholderBackground !== 'default' ?
-                    µm.rawSettings.imagePlaceholderBackground :
-                    µm.rawSettings.placeholderBackground;
+                xb.rawSettings.imagePlaceholderBackground !== 'default' ?
+                    xb.rawSettings.imagePlaceholderBackground :
+                    xb.rawSettings.placeholderBackground;
         }
         placeholdersReadTime = Date.now();
     }
@@ -678,12 +678,12 @@ const lookupBlockedCollapsibles = function(tabId, requests) {
         placeholders: placeholders
     };
 
-    var tabContext = µm.tabContextManager.lookup(tabId);
+    var tabContext = xb.tabContextManager.lookup(tabId);
     if ( tabContext === null ) {
         return response;
     }
 
-    var pageStore = µm.pageStoreFromTabId(tabId);
+    var pageStore = xb.pageStoreFromTabId(tabId);
     if ( pageStore !== null ) {
         pageStore.lookupBlockedCollapsibles(requests, response);
     }
@@ -704,9 +704,9 @@ const onMessage = function(request, sender, callback) {
     }
 
     let tabId = sender && sender.tab ? sender.tab.id || 0 : 0,
-        tabContext = µm.tabContextManager.lookup(tabId),
+        tabContext = xb.tabContextManager.lookup(tabId),
         srcHn = tabContext && tabContext.rootHostname,
-        pageStore = µm.pageStoreFromTabId(tabId);
+        pageStore = xb.pageStoreFromTabId(tabId);
 
     // Sync
     let response;
@@ -723,8 +723,8 @@ const onMessage = function(request, sender, callback) {
     case 'mustRenderNoscriptTags?':
         if ( tabContext === null ) { break; }
         response =
-            µm.tMatrix.mustBlock(srcHn, srcHn, 'script') &&
-            µm.tMatrix.evaluateSwitchZ('noscript-spoof', srcHn);
+            xb.tMatrix.mustBlock(srcHn, srcHn, 'script') &&
+            xb.tMatrix.evaluateSwitchZ('noscript-spoof', srcHn);
         if ( pageStore !== null ) {
             pageStore.hasNoscriptTags = true;
         }
@@ -733,17 +733,17 @@ const onMessage = function(request, sender, callback) {
     case 'securityPolicyViolation':
         if ( request.directive === 'worker-src' ) {
             let desURL = request.blockedURI;
-            let desHn = µm.URI.hostnameFromURI(desURL);
+            let desHn = xb.URI.hostnameFromURI(desURL);
             if ( desHn === '' ) {
                 desURL = request.documentURI;
-                desHn = µm.URI.hostnameFromURI(desURL);
+                desHn = xb.URI.hostnameFromURI(desURL);
             }
             if ( pageStore !== null ) {
                 pageStore.hasWebWorkers = true;
                 pageStore.recordRequest('script', desURL, request.blocked);
             }
-            if ( tabContext !== null && µm.logger.enabled ) {
-                µm.filteringContext.duplicate()
+            if ( tabContext !== null && xb.logger.enabled ) {
+                xb.filteringContext.duplicate()
                   .fromTabId(tabId)
                   .setRealm('network')
                   .setURL(desURL)
@@ -760,7 +760,7 @@ const onMessage = function(request, sender, callback) {
 
     case 'shutdown?':
         if ( tabContext !== null ) {
-            response = µm.tMatrix.evaluateSwitchZ('matrix-off', srcHn);
+            response = xb.tMatrix.evaluateSwitchZ('matrix-off', srcHn);
         }
         break;
 
@@ -789,14 +789,14 @@ vAPI.messaging.listen({
 {
 // >>>>> start of local scope
 
-const µm = µMatrix;
+const xb = Crossbar;
 
 const onMessage = function(request, sender, callback) {
     // Async
     switch ( request.what ) {
     case 'cloudGetOptions':
         vAPI.cloud.getOptions(function(options) {
-            options.enabled = µm.userSettings.cloudStorageEnabled === true;
+            options.enabled = xb.userSettings.cloudStorageEnabled === true;
             callback(options);
         });
         return;
@@ -851,10 +851,10 @@ vAPI.messaging.listen({
 {
 // >>>>> start of local scope
 
-const µm = µMatrix;
+const xb = Crossbar;
 
 const modifyRuleset = function(details) {
-    let ruleset = details.permanent ? µm.pMatrix : µm.tMatrix,
+    let ruleset = details.permanent ? xb.pMatrix : xb.tMatrix,
         modifiedTime = ruleset.modifiedTime;
     let toRemove = new Set(details.toRemove.trim().split(/\s*[\n\r]+\s*/));
     for ( let rule of toRemove ) {
@@ -865,31 +865,31 @@ const modifyRuleset = function(details) {
         ruleset.addFromLine(rule);
     }
     if ( details.permanent && ruleset.modifiedTime !== modifiedTime ) {
-        µm.saveMatrix();
+        xb.saveMatrix();
     }
 };
 
 const getAssets = function() {
     return Promise.all([
-        µm.getAvailableHostsFiles(),
-        µm.getAvailableRecipeFiles(),
-        µm.assets.metadata(),
+        xb.getAvailableHostsFiles(),
+        xb.getAvailableRecipeFiles(),
+        xb.assets.metadata(),
     ]).then(results => {
         return {
-            autoUpdate: µm.userSettings.autoUpdate,
-            blockedHostnameCount: µm.ubiquitousBlacklistRef.addedCount,
+            autoUpdate: xb.userSettings.autoUpdate,
+            blockedHostnameCount: xb.ubiquitousBlacklistRef.addedCount,
             hosts: Array.from(results[0]),
             recipes: Array.from(results[1]),
-            userRecipes: µm.userSettings.userRecipes,
+            userRecipes: xb.userSettings.userRecipes,
             cache: results[2],
-            contributor: µm.rawSettings.contributorMode
+            contributor: xb.rawSettings.contributorMode
         };
     });
 };
 
 const restoreUserData = async function(userData) {
     await Promise.all([
-        µMatrix.cacheStorage.clear(),
+        Crossbar.cacheStorage.clear(),
         vAPI.storage.clear(),
     ]);
 
@@ -902,7 +902,7 @@ const restoreUserData = async function(userData) {
     }
     promises.push(vAPI.storage.set(bin));
     if ( userData.rawSettings instanceof Object ) {
-        promises.push(µMatrix.saveRawSettings(userData.rawSettings));
+        promises.push(Crossbar.saveRawSettings(userData.rawSettings));
     }
     await Promise.all(promises);
 
@@ -911,7 +911,7 @@ const restoreUserData = async function(userData) {
 
 const resetUserData = async function() {
     await Promise.all([
-        µMatrix.cacheStorage.clear(),
+        Crossbar.cacheStorage.clear(),
         vAPI.storage.clear(),
     ]);
 
@@ -931,7 +931,7 @@ const onMessage = function(request, sender, callback) {
         return;
 
     case 'getSomeStats':
-        µm.getBytesInUse().then(bytesInUse => {
+        xb.getBytesInUse().then(bytesInUse => {
             callback({
                 version: vAPI.app.version,
                 storageUsed: bytesInUse,
@@ -952,9 +952,9 @@ const onMessage = function(request, sender, callback) {
             app: vAPI.app.name,
             version: vAPI.app.version,
             when: Date.now(),
-            settings: µm.userSettings,
-            rules: µm.pMatrix.toArray().sort(),
-            rawSettings: µm.rawSettings
+            settings: xb.userSettings,
+            rules: xb.pMatrix.toArray().sort(),
+            rawSettings: xb.rawSettings
         };
         break;
 
@@ -964,21 +964,21 @@ const onMessage = function(request, sender, callback) {
 
     case 'getRuleset':
         response = {
-            temporaryRules: µm.tMatrix.toArray(),
-            permanentRules: µm.pMatrix.toArray()
+            temporaryRules: xb.tMatrix.toArray(),
+            permanentRules: xb.pMatrix.toArray()
         };
         break;
 
     case 'purgeCache':
-        µm.assets.purge(request.assetKey);
-        µm.assets.remove('compiled/' + request.assetKey);
+        xb.assets.purge(request.assetKey);
+        xb.assets.remove('compiled/' + request.assetKey);
         break;
 
     case 'purgeAllCaches':
         if ( request.hard ) {
-            µm.assets.remove(/./);
+            xb.assets.remove(/./);
         } else {
-            µm.assets.purge(/./, 'public_suffix_list.dat');
+            xb.assets.purge(/./, 'public_suffix_list.dat');
         }
         break;
 
@@ -1018,19 +1018,19 @@ vAPI.messaging.listen({
 
 /******************************************************************************/
 
-const µm = µMatrix;
+const xb = Crossbar;
 const extensionOriginURL = vAPI.getURL('');
 
 const getLoggerData = async function(details, activeTabId) {
     const response = {
         activeTabId,
-        colorBlind: µm.userSettings.colorBlindFriendly,
-        entries: µm.logger.readAll(details.ownerId),
-        pageStoresToken: µm.pageStoresToken
+        colorBlind: xb.userSettings.colorBlindFriendly,
+        entries: xb.logger.readAll(details.ownerId),
+        pageStoresToken: xb.pageStoresToken
     };
-    if ( µm.pageStoresToken !== details.pageStoresToken ) {
+    if ( xb.pageStoresToken !== details.pageStoresToken ) {
         const pageStores = new Map();
-        for ( const [ tabId, pageStore ] of µm.pageStores ) {
+        for ( const [ tabId, pageStore ] of xb.pageStores ) {
             if ( pageStore.rawURL.startsWith(extensionOriginURL) ) { continue; }
             let title = pageStore.title;
             if ( title === '' ) {
@@ -1041,7 +1041,7 @@ const getLoggerData = async function(details, activeTabId) {
         response.pageStores = Array.from(pageStores);
     }
     if ( activeTabId ) {
-        const pageStore = µm.pageStoreFromTabId(activeTabId);
+        const pageStore = xb.pageStoreFromTabId(activeTabId);
         if (
             pageStore === null ||
             pageStore.rawURL.startsWith(extensionOriginURL)
@@ -1075,8 +1075,8 @@ const onMessage = function(request, sender, callback) {
     switch ( request.what ) {
     case 'readAll':
         if (
-            µm.logger.ownerId !== undefined &&
-            µm.logger.ownerId !== request.ownerId
+            xb.logger.ownerId !== undefined &&
+            xb.logger.ownerId !== request.ownerId
         ) {
             return callback({ unavailable: true });
         }
@@ -1101,14 +1101,14 @@ const onMessage = function(request, sender, callback) {
 
     case 'getRuleEditorOptions':
         response = {
-            colorBlindFriendly: µm.userSettings.colorBlindFriendly,
-            popupScopeLevel: µm.userSettings.popupScopeLevel
+            colorBlindFriendly: xb.userSettings.colorBlindFriendly,
+            popupScopeLevel: xb.userSettings.popupScopeLevel
         };
         break;
 
     case 'releaseView':
-        if ( request.ownerId === µm.logger.ownerId ) {
-            µm.logger.ownerId = undefined;
+        if ( request.ownerId === xb.logger.ownerId ) {
+            xb.logger.ownerId = undefined;
         }
         break;
 

@@ -1,10 +1,10 @@
-uMatrix: Matris tabanlı işaret et ve tıkla  güvenlik duvarıdır, birçok gizlilik arttırıcı aracıyla birlikte gelir.
+Crossbar: Matris tabanlı işaret et ve tıkla  güvenlik duvarıdır, birçok gizlilik arttırıcı aracıyla birlikte gelir.
 
 *İleri düzey kullanıcılar için.*
 
-uMatrix tarayıcınızın nereye bağlanabileceği, ne tür veri indirebileceği ve yürütebileceği konusunda tam denetimi size verir. Kimse sizin yerinize karar vermez: Siz seçersiniz. Gizliliğinizin tam denetimi sizdedir.
+Crossbar tarayıcınızın nereye bağlanabileceği, ne tür veri indirebileceği ve yürütebileceği konusunda tam denetimi size verir. Kimse sizin yerinize karar vermez: Siz seçersiniz. Gizliliğinizin tam denetimi sizdedir.
 
-uMatrix tümünü engelle/istisnalara izin ver modunda çalışır, bunun anlamı 3. taraf betiklere ihtiyaç duyan web sitelerinin muhtemelen "bozuk" olabileceğidir. İki tıklama ile uMatrix genelde siteleri bozmayacak tümüne izin ver/istisnaları engelle moduna ayarlanabilir. Bu konu hakkında daha ayrıntılı bilgi almak için https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views bağlantısına bakın.
+Crossbar tümünü engelle/istisnalara izin ver modunda çalışır, bunun anlamı 3. taraf betiklere ihtiyaç duyan web sitelerinin muhtemelen "bozuk" olabileceğidir. İki tıklama ile Crossbar genelde siteleri bozmayacak tümüne izin ver/istisnaları engelle moduna ayarlanabilir. Bu konu hakkında daha ayrıntılı bilgi almak için https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views bağlantısına bakın.
 
 * Engellendiğine veya izin verildiğine (sizin seçiminiz) bağlı olarak başarısız veya denenmiş TÜM uzak bağlantıları görün.
 
@@ -14,7 +14,7 @@ uMatrix tümünü engelle/istisnalara izin ver modunda çalışır, bunun anlam�
 
 * Belirli kara listelere bağlı (birçok eksiği bulunan) kalmak zorunda değilsiniz: Tüm denetim sizde.
 
-* Kullanımı kolay: uMatrix işaret et ve tıkla matrisiyle bir web sitesinden kaynaklanan istekleri kolaylıkla beyaz/kara listeye almanızı sağlar:
+* Kullanımı kolay: Crossbar işaret et ve tıkla matrisiyle bir web sitesinden kaynaklanan istekleri kolaylıkla beyaz/kara listeye almanızı sağlar:
 
 - alan adları (sol sütun)
   * özelden
@@ -32,7 +32,7 @@ uMatrix tümünü engelle/istisnalara izin ver modunda çalışır, bunun anlam�
 
 Tek hücreyi, tüm satırı, satır gruplarını, tüm sütunu veya tüm matrisi bir tek tıklama ile kara/beyaz listeye alabilirsiniz.
 
-uMatrix'in süzgeç motoru hangi hücrelerin kara/beyaz listede bulunduğuna göre öncelik mantığını kullanarak nelerin engelleneceğine veya nelere izin verileceğine karar verir. Örneğin, bu şekilde sayfada beliren yeni veri türlerine sürekli izin vermenize gerek kalmadan tüm sayfayı beyaz listeye almanıza izin verir.
+Crossbar'in süzgeç motoru hangi hücrelerin kara/beyaz listede bulunduğuna göre öncelik mantığını kullanarak nelerin engelleneceğine veya nelere izin verileceğine karar verir. Örneğin, bu şekilde sayfada beliren yeni veri türlerine sürekli izin vermenize gerek kalmadan tüm sayfayı beyaz listeye almanıza izin verir.
 
 Tüm kurallar kapsamlıdır. Örneğin, `facebook.com` ve `facebook.net` sitelerini `www.facebook.com`dışındaki sitelerde engelleyebilirsiniz. Bu şekilde Facebook gezinti alışkanlıklarınızla ilgili profil oluşturamayacaktır.
 
@@ -76,6 +76,6 @@ Bu eklenti ayrıca gezinti hızınızı da arttırmak istiyorsanız kullanışl�
 
 HATALAR, SORUNLAR: https://github.com/gorhill/uMatrix/issues
 
-KAYNAK KODU: https://github.com/gorhill/uMatrix (GPLv3)
+KAYNAK KODU: https://github.com/dmolik/crossbar (GPLv3)
 
-DEĞİŞİM GÜNLÜĞÜ: https://github.com/gorhill/uMatrix/releases
+DEĞİŞİM GÜNLÜĞÜ: https://github.com/dmolik/crossbar/releases

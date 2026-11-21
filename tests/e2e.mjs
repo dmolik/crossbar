@@ -14,7 +14,7 @@ import { startServer } from './server.mjs';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const extensionPath = path.resolve(
     here,
-    process.argv[2] || '../dist/build/uMatrix.chromium'
+    process.argv[2] || '../dist/build/crossbar.chromium'
 );
 const PORT = 8642;
 
@@ -74,8 +74,8 @@ const attachServiceWorker = async function(predicate = isServiceWorker) {
     // Ready once boot completed and the rules are in place.
     for ( let i = 0; i < 300; i++ ) {
         const ready = await sw.evaluate(async ( ) => {
-            if ( typeof µMatrix === 'undefined' || µMatrix.dnr === undefined ) { return false; }
-            if ( µMatrix.dnr.isIdle() === false ) { return false; }
+            if ( typeof Crossbar === 'undefined' || Crossbar.dnr === undefined ) { return false; }
+            if ( Crossbar.dnr.isIdle() === false ) { return false; }
             const dynamic = await chrome.declarativeNetRequest.getDynamicRules();
             return dynamic.length !== 0;
         }).catch(( ) => false);
@@ -83,8 +83,8 @@ const attachServiceWorker = async function(predicate = isServiceWorker) {
         await sleep(100);
     }
     const state = await sw.evaluate(async ( ) => ({
-        booted: typeof µMatrix !== 'undefined' && µMatrix.temporaryMatrixLoaded,
-        idle: typeof µMatrix !== 'undefined' && µMatrix.dnr?.isIdle(),
+        booted: typeof Crossbar !== 'undefined' && Crossbar.temporaryMatrixLoaded,
+        idle: typeof Crossbar !== 'undefined' && Crossbar.dnr?.isIdle(),
         session: (await chrome.declarativeNetRequest.getSessionRules()).length,
         dynamic: (await chrome.declarativeNetRequest.getDynamicRules()).length,
     })).catch(ex => ex.message);
@@ -128,7 +128,7 @@ const pageFlags = page => page.evaluate(( ) => ({
 const settle = async function() {
     await sleep(200);
     for ( let i = 0; i < 100; i++ ) {
-        if ( await sw.evaluate(( ) => µMatrix.dnr.isIdle()) ) { return; }
+        if ( await sw.evaluate(( ) => Crossbar.dnr.isIdle()) ) { return; }
         await sleep(50);
     }
     throw new Error('rules not updated');
@@ -183,7 +183,7 @@ try {
         assert.equal(requested(entries, 'cookie.test', '/page').cookie, 'tracker=1');
         assert.equal(requested(entries, 'cookie.test', '/first-party.js').cookie, 'tracker=1');
         await sw.evaluate(( ) => {
-            µMatrix.tMatrix.blacklistCell('cookie.test', 'cookie.test', 'cookie');
+            Crossbar.tMatrix.blacklistCell('cookie.test', 'cookie.test', 'cookie');
         });
         await settle();
         entries = await visit(page, 'http://cookie.test/page');
@@ -197,7 +197,7 @@ try {
 
     await test('temporary rule applies to its scope only', async ( ) => {
         await sw.evaluate(( ) => {
-            µMatrix.tMatrix.whitelistCell('site.test', 'cdn.other.test', 'script');
+            Crossbar.tMatrix.whitelistCell('site.test', 'cdn.other.test', 'script');
         });
         await settle();
         let entries = await visit(page, 'http://site.test/page');
@@ -211,7 +211,7 @@ try {
 
     await test('blocked first-party script also blocks inline scripts', async ( ) => {
         await sw.evaluate(( ) => {
-            µMatrix.tMatrix.blacklistCell('strict.test', 'strict.test', 'script');
+            Crossbar.tMatrix.blacklistCell('strict.test', 'strict.test', 'script');
         });
         await settle();
         const entries = await visit(page, 'http://strict.test/page');
@@ -225,7 +225,7 @@ try {
         await visit(page, 'http://site.test/page');
         const stats = await sw.evaluate(async ( ) => {
             const [ tab ] = await chrome.tabs.query({ url: 'http://site.test/*' });
-            const pageStore = µMatrix.pageStoreFromTabId(tab.id);
+            const pageStore = Crossbar.pageStoreFromTabId(tab.id);
             return {
                 blocked: pageStore.perLoadBlockedRequestCount,
                 allowed: pageStore.perLoadAllowedRequestCount,
@@ -243,11 +243,11 @@ try {
             const stored = await chrome.storage.session.get('temporaryMatrix');
             const inStorage = (stored.temporaryMatrix || [])
                 .includes('site.test cdn.other.test script allow');
-            µMatrix.tMatrix.assign(µMatrix.pMatrix);
-            await µMatrix.loadMatrix();
+            Crossbar.tMatrix.assign(Crossbar.pMatrix);
+            await Crossbar.loadMatrix();
             return {
                 inStorage,
-                cell: µMatrix.tMatrix.evaluateCell('site.test', 'cdn.other.test', 'script'),
+                cell: Crossbar.tMatrix.evaluateCell('site.test', 'cdn.other.test', 'script'),
             };
         });
         assert.equal(restored.inStorage, true, 'temporary rule not in session storage');
@@ -255,6 +255,23 @@ try {
         await settle();
         const entries = await visit(page, 'http://site.test/page');
         assert.ok(requested(entries, 'cdn.other.test'));
+    });
+
+    await test('recipe files written for uMatrix are accepted', async ( ) => {
+        const names = await sw.evaluate(( ) => {
+            for ( const name of [ 'uMatrix', 'Crossbar' ] ) {
+                Crossbar.recipeManager.fromString(
+                    `! ${name}: Ruleset recipes 1.0\n! Maintainer: test\n\n` +
+                    `${name} recipe\n\t${name.toLowerCase()}.test *\n\t\t_ cdn.other.test script\n\n`
+                );
+            }
+            const fetch = src => new Promise(resolve => {
+                Crossbar.recipeManager.fetch(src, [ 'cdn.other.test' ], resolve);
+            });
+            return Promise.all([ fetch('umatrix.test'), fetch('crossbar.test') ])
+                .then(results => results.flat().map(r => r.name).sort());
+        });
+        assert.deepEqual(names, [ 'Crossbar recipe', 'uMatrix recipe' ]);
     });
 
     await test('no errors in service worker', async ( ) => {

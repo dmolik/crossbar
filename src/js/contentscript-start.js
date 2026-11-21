@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a browser extension to black/white list requests.
+    Crossbar - a browser extension to black/white list requests.
     Copyright (C) 2017-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 'use strict';
@@ -51,9 +51,9 @@
             return false;
         }
 
-        // Further validate that the policy violation is relevant to uMatrix:
+        // Further validate that the policy violation is relevant to Crossbar:
         // the event still could have been fired as a result of a CSP header
-        // not injected by uMatrix.
+        // not injected by Crossbar.
         if ( reGoodWorkerSrc.test(ev.originalPolicy) === false ) {
             return false;
         }
@@ -62,7 +62,7 @@
         // However, we do want to report external resources each time.
         // TODO: this could eventually lead to duplicated reports for external
         //       resources if another extension uses the same approach as
-        //       uMatrix. Think about what could be done to avoid duplicate
+        //       Crossbar. Think about what could be done to avoid duplicate
         //       reports.
         if ( ev.blockedURI.includes('://') === false ) {
             if ( vAPI.selfWorkerSrcReported ) { return true; }

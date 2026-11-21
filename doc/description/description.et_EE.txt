@@ -1,8 +1,8 @@
-µMatrix: Maatriksil põhinev tulemüür, kus hiirekursoriga sihitakse ja vajutatakse ebameeldiva sisu eemaldamiseks. Sellele kaasneb ka mitmeid turvalisust lisavad võimalused. Mõeldud kogenud kasutajaile.
+Crossbar: Maatriksil põhinev tulemüür, kus hiirekursoriga sihitakse ja vajutatakse ebameeldiva sisu eemaldamiseks. Sellele kaasneb ka mitmeid turvalisust lisavad võimalused. Mõeldud kogenud kasutajaile.
 
-µMatrix laseb Teil kontrollida kõiki veebilehitseja ühendusi, sealhulgas allalaaditavaid andmeid ja rakenduste käivitusi. Keegi teine ei otsusta Teie eest: Ainult Teie olete ohjas. Te kontrollite täielikult oma privaatsust.
+Crossbar laseb Teil kontrollida kõiki veebilehitseja ühendusi, sealhulgas allalaaditavaid andmeid ja rakenduste käivitusi. Keegi teine ei otsusta Teie eest: Ainult Teie olete ohjas. Te kontrollite täielikult oma privaatsust.
 
-Üldistades töötab µMatrix segamatus kõike-blokeerivas/erandeid-lubades olekus, mis võib kolmanda osapooli sisaldavaid portaale "katkistena" kuvada. µMatrixit on võimalik kahe klõpsuga tööle panna kõike-lubavasse/erandeid-blokeerivasse olekusse, mis tavaliselt ei tekita portaalide kuvamises probleeme. Rohkem teavet selle teema kohta leiate leheküljelt https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views
+Üldistades töötab Crossbar segamatus kõike-blokeerivas/erandeid-lubades olekus, mis võib kolmanda osapooli sisaldavaid portaale "katkistena" kuvada. Crossbarit on võimalik kahe klõpsuga tööle panna kõike-lubavasse/erandeid-blokeerivasse olekusse, mis tavaliselt ei tekita portaalide kuvamises probleeme. Rohkem teavet selle teema kohta leiate leheküljelt https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views
 
 Müüdi "Chromiumil põhinevad veebilehitsejad ei saa tegelikkuses blokeerida Javaskripte" kohta leidub infot siit: https://github.com/gorhill/httpswitchboard/wiki/Blocking-javascript-execution-reliably-in-Chromium-based-browsers. Kokkuvõte: Jah, Chromiumis saab küll tegelikult blokeerida Javaskripti.
 
@@ -14,7 +14,7 @@ Müüdi "Chromiumil põhinevad veebilehitsejad ei saa tegelikkuses blokeerida Ja
 
 * You do not have to solely rely on just one particular curated blacklist (arguably with many missing entries) outside which nothing else can be blocked: You are in full control.
 
-* Ease of use: µMatrix lets you easily whitelist/blacklist net requests which originate from within a web page according to a point-and-click matrix:
+* Ease of use: Crossbar lets you easily whitelist/blacklist net requests which originate from within a web page according to a point-and-click matrix:
 
 - domain names (left column)
   * from very specific
@@ -32,7 +32,7 @@ Müüdi "Chromiumil põhinevad veebilehitsejad ei saa tegelikkuses blokeerida Ja
 
 You can blacklist/whitelist a single cell, an entire row, a group of rows, an entire column, or the whole matrix with just one click.
 
-µMatrix's filtering engine uses precedence logic to evaluate what is blocked/allowed according to which cells are blacklisted/whitelisted. For example, this allows you to whitelist a whole page with one click, without having to repeatedly whitelist whatever new data appear on the page.
+Crossbar's filtering engine uses precedence logic to evaluate what is blocked/allowed according to which cells are blacklisted/whitelisted. For example, this allows you to whitelist a whole page with one click, without having to repeatedly whitelist whatever new data appear on the page.
 
 All rules are scoped. For example, you can block `facebook.com` and `facebook.net` everywhere except when visiting a page on `www.facebook.com`. This way Facebook won't be able to build a profile of your browsing habits.
 
@@ -88,6 +88,6 @@ This extension is also useful if you wish to speed up your browsing, by globally
 
 =====
 
-SOURCE CODE: https://github.com/gorhill/uMatrix (GPLv3)
+SOURCE CODE: https://github.com/dmolik/crossbar (GPLv3)
 
-CHANGE LOG: https://github.com/gorhill/uMatrix/releases
+CHANGE LOG: https://github.com/dmolik/crossbar/releases

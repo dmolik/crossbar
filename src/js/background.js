@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a browser extension to black/white list requests.
+    Crossbar - a browser extension to black/white list requests.
     Copyright (C) 2014-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -16,14 +16,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 'use strict';
 
 /******************************************************************************/
 
-const µMatrix = (( ) => { // jshint ignore:line
+const Crossbar = (( ) => { // jshint ignore:line
 
 /******************************************************************************/
 

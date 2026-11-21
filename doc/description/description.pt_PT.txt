@@ -1,8 +1,8 @@
 Uma firewall point & click baseada numa matriz, com funcionalidade para reforçar a privacidade de cada um. Para utilizadores avançados.
 
-uMatrix coloca-o no controlo de onde o seu browser se pode conectar, que tipo de dados podem ser transferidos, e o que pode ser executado. Ninguém decide por si: Você escolhe. Você tem controlo total sob a sua privacidade.
+Crossbar coloca-o no controlo de onde o seu browser se pode conectar, que tipo de dados podem ser transferidos, e o que pode ser executado. Ninguém decide por si: Você escolhe. Você tem controlo total sob a sua privacidade.
 
-Fora da caixa, uMatrix funciona numa configuração relaxada "bloqueia-tudo/permite-excepcionalmente", o que quer dizer que web sites que necessitem scripts de terceiros poderão não estar funcionais. Com dois clicks, o uMatrix pode ser configurado para funcionar em modo "permite-tudo/bloqueia-excepcionalmente", o que geralmente não cria problemas em nenhuma página web. Ver https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views para mais detalhes sobre este tópico.
+Fora da caixa, Crossbar funciona numa configuração relaxada "bloqueia-tudo/permite-excepcionalmente", o que quer dizer que web sites que necessitem scripts de terceiros poderão não estar funcionais. Com dois clicks, o Crossbar pode ser configurado para funcionar em modo "permite-tudo/bloqueia-excepcionalmente", o que geralmente não cria problemas em nenhuma página web. Ver https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views para mais detalhes sobre este tópico.
 
 Sobre do mito que "browser baseados em Chromium não conseguem bloquear JavaScript fielmente", ver: https://github.com/gorhill/httpswitchboard/wiki/Blocking-javascript-execution-reliably-in-Chromium-based-browsers. Sumário: Sim, JavaScript pode ser bloqueado com seguração no Chromium.
 
@@ -14,7 +14,7 @@ Sobre do mito que "browser baseados em Chromium não conseguem bloquear JavaScri
 
 * Você não tem de depender unicamente numa lista negra em particular (possivelmente a faltar entradas) fora do qual mais nada pode ser bloqueado: Você está em controlo total.
 
-* Facilidade de utilização: uMatrix deixa-o adicionar pedidos net que originam de uma página web a uma lista negra/branca, recorrendo a uma matriz point & click:
+* Facilidade de utilização: Crossbar deixa-o adicionar pedidos net que originam de uma página web a uma lista negra/branca, recorrendo a uma matriz point & click:
 
 - nomes de domínio (coluna esquerda)
   * de muito específico
@@ -32,7 +32,7 @@ Sobre do mito que "browser baseados em Chromium não conseguem bloquear JavaScri
 
 Pode adicionar uma única célula à lista negra/branca, um grupo de linhas, uma coluna inteira, ou toda a matriz, com apenas um clique.
 
-O mecanismo de filtragem do uMatrix usa lógica de precedência para avaliar o que é permitido/está bloqueado, de acordo com as células que estão na lista negra/branca. Por exemplo, isto permite que adicione uma página inteira à lista branca com um só clique, sem ter que adicionar elementos à mesma, à medida que vão aparecendo.
+O mecanismo de filtragem do Crossbar usa lógica de precedência para avaliar o que é permitido/está bloqueado, de acordo com as células que estão na lista negra/branca. Por exemplo, isto permite que adicione uma página inteira à lista branca com um só clique, sem ter que adicionar elementos à mesma, à medida que vão aparecendo.
 
 Todas as regras têm escopos. Por exemplo, pode bloquear 'facebook.com' e 'facebook.net' em todo o lado, excepto quando visita a página em 'www.facebook.com'. Desta maneira, o Facebook não será capaz de criar um perfil com os seus hábitos de navegação pessoais.
 
@@ -88,6 +88,6 @@ Esta extensão é também útil caso queira acelerar a velocidade do carregament
 
 =====
 
-CÓDIGO FONTE: https://github.com/gorhill/uMatrix (GPLv3)
+CÓDIGO FONTE: https://github.com/dmolik/crossbar (GPLv3)
 
-REGISTO DE ALTERAÇÕES: https://github.com/gorhill/uMatrix/releases
+REGISTO DE ALTERAÇÕES: https://github.com/dmolik/crossbar/releases

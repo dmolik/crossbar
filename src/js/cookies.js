@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a browser extension to black/white list requests.
+    Crossbar - a browser extension to black/white list requests.
     Copyright (C) 2013-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 // rhill 2013-12-14: the whole cookie management has been rewritten so as
@@ -33,11 +33,11 @@
 // Use cached-context approach rather than object-based approach, as details
 // of the implementation do not need to be visible
 
-µMatrix.cookieHunter = (( ) => {
+Crossbar.cookieHunter = (( ) => {
 
 /******************************************************************************/
 
-const µm = µMatrix;
+const xb = Crossbar;
 
 const recordPageCookiesQueue = new Map();
 const removeCookieQueue = new Set();
@@ -60,7 +60,7 @@ const CookieEntry = class {
         this.session = cookie.session;
         this.anySubdomain = cookie.domain.charAt(0) === '.';
         this.hostname = this.anySubdomain ? cookie.domain.slice(1) : cookie.domain;
-        this.domain = µm.URI.domainFromHostname(this.hostname) || this.hostname;
+        this.domain = xb.URI.domainFromHostname(this.hostname) || this.hostname;
         this.path = cookie.path;
         this.name = cookie.name;
         this.value = cookie.value;
@@ -135,11 +135,11 @@ const cookieKeyFromCookie = function(cookie) {
 };
 
 const cookieKeyFromCookieURL = function(url, type, name) {
-    const µmuri = µm.URI.set(url);
+    const xburi = xb.URI.set(url);
     const cb = cookieKeyBuilder;
-    cb[0] = µmuri.scheme;
-    cb[2] = µmuri.hostname;
-    cb[3] = µmuri.path;
+    cb[0] = xburi.scheme;
+    cb[2] = xburi.hostname;
+    cb[3] = xburi.path;
     cb[5] = type;
     cb[7] = name;
     return cb.join('');
@@ -198,7 +198,7 @@ const recordPageCookie = (( ) => {
             for ( const cookieKey of qentry[1] ) {
                 let cookieEntry = cookieDict.get(cookieKey);
                 if ( cookieEntry === undefined ) { continue; }
-                let blocked = µm.mustBlock(
+                let blocked = xb.mustBlock(
                     pageStore.pageHostname,
                     cookieEntry.hostname,
                     'cookie'
@@ -213,8 +213,8 @@ const recordPageCookie = (( ) => {
                     encodeURIComponent(cookieEntry.name);
                 const cookieURL = cookieLogEntryBuilder.join('');
                 pageStore.recordRequest('cookie', cookieURL, blocked);
-                if ( µm.logger.enabled ) {
-                    µm.filteringContext
+                if ( xb.logger.enabled ) {
+                    xb.filteringContext
                       .duplicate()
                       .fromTabId(pageStore.tabId)
                       .setType('cookie')
@@ -225,10 +225,10 @@ const recordPageCookie = (( ) => {
                 }
                 cookieEntry.usedOn.add(pageStore.pageHostname);
                 if ( !blocked ) { continue; }
-                if ( µm.userSettings.deleteCookies ) {
+                if ( xb.userSettings.deleteCookies ) {
                     removeCookieAsync(cookieKey);
                 }
-                µm.updateToolbarIcon(pageStore.tabId);
+                xb.updateToolbarIcon(pageStore.tabId);
             }
         }
         queue.clear();
@@ -270,18 +270,18 @@ const browserCookieRemove = function(cookieEntry, name) {
         const template = success ? i18nCookieDeleteSuccess : i18nCookieDeleteFailure;
         if ( removeCookieFromDict(sessionCookieKey) ) {
             if ( success ) {
-                µm.cookieRemovedCounter += 1;
+                xb.cookieRemovedCounter += 1;
             }
-            µm.logger.writeOne({
+            xb.logger.writeOne({
                 realm: 'message',
                 text: template.replace('{{value}}', sessionCookieKey)
             });
         }
         if ( removeCookieFromDict(persistCookieKey) ) {
             if ( success ) {
-                µm.cookieRemovedCounter += 1;
+                xb.cookieRemovedCounter += 1;
             }
-            µm.logger.writeOne({
+            xb.logger.writeOne({
                 realm: 'message',
                 text: template.replace('{{value}}', persistCookieKey)
             });
@@ -308,7 +308,7 @@ const processPageRecordQueue = function() {
 // Effectively remove cookies.
 
 const processRemoveQueue = function() {
-    const userSettings = µm.userSettings;
+    const userSettings = xb.userSettings;
     const deleteCookies = userSettings.deleteCookies;
 
     // Session cookies which timestamp is *after* tstampObsolete will
@@ -340,7 +340,7 @@ const processRemoveQueue = function() {
 
         // Query scopes only if we are going to use them
         if ( srcHostnames === undefined ) {
-            srcHostnames = µm.tMatrix.extractAllSourceHostnames();
+            srcHostnames = xb.tMatrix.extractAllSourceHostnames();
         }
 
         // Ensure cookie is not allowed on ALL current web pages: It can
@@ -365,7 +365,7 @@ const processRemoveQueue = function() {
 // maybe a user has 1000s of cookies sitting in his browser...
 
 const processClean = function() {
-    const us = µm.userSettings;
+    const us = xb.userSettings;
     if ( us.deleteCookies || us.deleteUnusedSessionCookies ) {
         const cookieKeys = Array.from(cookieDict.keys());
         const len = cookieKeys.length;
@@ -408,7 +408,7 @@ const canRemoveCookie = function(cookieKey, srcHostnames) {
     const cookieHostname = cookieEntry.hostname;
 
     for ( const srcHostname of cookieEntry.usedOn ) {
-        if ( µm.mustAllow(srcHostname, cookieHostname, 'cookie') ) {
+        if ( xb.mustAllow(srcHostname, cookieHostname, 'cookie') ) {
             return false;
         }
     }
@@ -420,7 +420,7 @@ const canRemoveCookie = function(cookieKey, srcHostnames) {
     for (;;) {
         if (
             srcHostnames.has(srcHostname) &&
-            µm.mustAllow(srcHostname, cookieHostname, 'cookie')
+            xb.mustAllow(srcHostname, cookieHostname, 'cookie')
         ) {
             return false;
         }
@@ -457,7 +457,7 @@ vAPI.cookies.onChanged = (( ) => {
             queue.delete(qentry[0]);
         }
         if ( cookieKeys.length !== 0 ) {
-            for ( const pageStore of µm.pageStores.values() ) {
+            for ( const pageStore of xb.pageStores.values() ) {
                 const allHostnamesString = pageStore.allHostnamesString;
                 for ( const cookieKey of cookieKeys ) {
                     if ( cookieMatchDomains(cookieKey, allHostnamesString) ) {
@@ -496,7 +496,7 @@ vAPI.cookies.onChanged = (( ) => {
 vAPI.cookies.onRemoved = function(cookie) {
     const cookieKey = cookieKeyFromCookie(cookie);
     if ( removeCookieFromDict(cookieKey) ) {
-        µm.logger.writeOne({
+        xb.logger.writeOne({
             realm: 'message',
             text: i18nCookieDeleteSuccess.replace('{{value}}', cookieKey),
             prettify: 'cookie'
@@ -511,7 +511,7 @@ vAPI.cookies.onRemoved = function(cookie) {
 vAPI.cookies.onAllRemoved = function() {
     for ( const cookieKey of cookieDict.keys() ) {
         if ( removeCookieFromDict(cookieKey) ) {
-            µm.logger.writeOne({
+            xb.logger.writeOne({
                 realm: 'message',
                 text: i18nCookieDeleteSuccess.replace('{{value}}', cookieKey),
                 prettify: 'cookie'

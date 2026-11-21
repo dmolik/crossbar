@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a Chromium browser extension to black/white list requests.
+    Crossbar - a Chromium browser extension to black/white list requests.
     Copyright (C) 2014-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 /* global punycode, publicSuffixList */
@@ -25,7 +25,7 @@
 
 /******************************************************************************/
 
-µMatrix.getBytesInUse = async function() {
+Crossbar.getBytesInUse = async function() {
     const promises = [];
     let bytesInUse;
 
@@ -61,11 +61,11 @@
 
 /******************************************************************************/
 
-µMatrix.saveUserSettings = function() {
+Crossbar.saveUserSettings = function() {
     return vAPI.storage.set(this.userSettings);
 };
 
-µMatrix.loadUserSettings = async function() {
+Crossbar.loadUserSettings = async function() {
     this.userSettings = await vAPI.storage.get(this.userSettings);
 
     if ( typeof this.userSettings.externalHostsFiles === 'string' ) {
@@ -137,7 +137,7 @@
 
 /******************************************************************************/
 
-µMatrix.loadRawSettings = async function() {
+Crossbar.loadRawSettings = async function() {
     const bin = await vAPI.storage.get('rawSettings');
     if ( bin instanceof Object === false ) { return; }
 
@@ -165,7 +165,7 @@
 // This way the new default values in the future will properly apply for those
 // which were not modified by the user.
 
-µMatrix.saveRawSettings = function() {
+Crossbar.saveRawSettings = function() {
     const bin = { rawSettings: {} };
     for ( const prop in this.rawSettings ) {
         if (
@@ -180,34 +180,34 @@
 };
 
 self.addEventListener('rawSettingsChanged', ( ) => {
-    const µm = µMatrix;
-    self.log.verbosity = µm.rawSettings.consoleLogLevel;
+    const xb = Crossbar;
+    self.log.verbosity = xb.rawSettings.consoleLogLevel;
     vAPI.net.setOptions({
-        cnameAliasList: µm.rawSettings.cnameAliasList,
-        cnameIgnoreList: µm.rawSettings.cnameIgnoreList,
-        cnameIgnore1stParty: µm.rawSettings.cnameIgnore1stParty,
-        cnameIgnoreRootDocument: µm.rawSettings.cnameIgnoreRootDocument,
-        cnameMaxTTL: µm.rawSettings.cnameMaxTTL,
-        cnameReplayFullURL: µm.rawSettings.cnameReplayFullURL,
+        cnameAliasList: xb.rawSettings.cnameAliasList,
+        cnameIgnoreList: xb.rawSettings.cnameIgnoreList,
+        cnameIgnore1stParty: xb.rawSettings.cnameIgnore1stParty,
+        cnameIgnoreRootDocument: xb.rawSettings.cnameIgnoreRootDocument,
+        cnameMaxTTL: xb.rawSettings.cnameMaxTTL,
+        cnameReplayFullURL: xb.rawSettings.cnameReplayFullURL,
     });
 });
 
 self.addEventListener('rawSettingsChanged', ( ) => {
-    const µm = µMatrix;
-    self.log.verbosity = µm.rawSettings.consoleLogLevel;
+    const xb = Crossbar;
+    self.log.verbosity = xb.rawSettings.consoleLogLevel;
     vAPI.net.setOptions({
-        cnameIgnoreList: µm.rawSettings.cnameIgnoreList,
-        cnameIgnore1stParty: µm.rawSettings.cnameIgnore1stParty,
-        cnameIgnoreExceptions: µm.rawSettings.cnameIgnoreExceptions,
-        cnameIgnoreRootDocument: µm.rawSettings.cnameIgnoreRootDocument,
-        cnameMaxTTL: µm.rawSettings.cnameMaxTTL,
-        cnameReplayFullURL: µm.rawSettings.cnameReplayFullURL,
+        cnameIgnoreList: xb.rawSettings.cnameIgnoreList,
+        cnameIgnore1stParty: xb.rawSettings.cnameIgnore1stParty,
+        cnameIgnoreExceptions: xb.rawSettings.cnameIgnoreExceptions,
+        cnameIgnoreRootDocument: xb.rawSettings.cnameIgnoreRootDocument,
+        cnameMaxTTL: xb.rawSettings.cnameMaxTTL,
+        cnameReplayFullURL: xb.rawSettings.cnameReplayFullURL,
     });
 });
 
 /******************************************************************************/
 
-µMatrix.rawSettingsFromString = function(raw) {
+Crossbar.rawSettingsFromString = function(raw) {
     const out = Object.assign({}, this.rawSettingsDefault);
     const lineIter = new this.LineIterator(raw);
     while ( lineIter.eot() === false ) {
@@ -244,7 +244,7 @@ self.addEventListener('rawSettingsChanged', ( ) => {
     this.fireDOMEvent('rawSettingsChanged');
 };
 
-µMatrix.stringFromRawSettings = function() {
+Crossbar.stringFromRawSettings = function() {
     const out = [];
     for ( const key of Object.keys(this.rawSettings).sort() ) {
         out.push(key + ' ' + this.rawSettings[key]);
@@ -257,7 +257,7 @@ self.addEventListener('rawSettingsChanged', ( ) => {
 // These settings must be available immediately on startup, without delay
 // through the vAPI.localStorage. Add/remove settings as needed.
 
-µMatrix.saveImmediateHiddenSettings = function() {
+Crossbar.saveImmediateHiddenSettings = function() {
     const props = [
         'consoleLogLevel',
         'suspendTabsUntilReady',
@@ -280,11 +280,11 @@ self.addEventListener('rawSettingsChanged', ( ) => {
 
 /******************************************************************************/
 
-µMatrix.saveMatrix = function() {
+Crossbar.saveMatrix = function() {
     return vAPI.storage.set({ userMatrix: this.pMatrix.toArray() });
 };
 
-µMatrix.loadMatrix = async function() {
+Crossbar.loadMatrix = async function() {
     const [ bin, temporary ] = await Promise.all([
         vAPI.storage.get('userMatrix'),
         this.loadTemporaryMatrix(),
@@ -307,7 +307,7 @@ self.addEventListener('rawSettingsChanged', ( ) => {
 // ruleset is mirrored in session storage (cleared when the browser exits) to
 // survive a restart.
 
-µMatrix.loadTemporaryMatrix = async function() {
+Crossbar.loadTemporaryMatrix = async function() {
     const sessionStorage = vAPI.sessionStorage;
     if ( sessionStorage instanceof Object === false ) { return; }
     try {
@@ -319,17 +319,17 @@ self.addEventListener('rawSettingsChanged', ( ) => {
 
 if ( vAPI.sessionStorage instanceof Object ) {
     self.addEventListener('matrixRulesetChange', ev => {
-        const µm = µMatrix;
-        if ( ev.detail !== µm.tMatrix ) { return; }
+        const xb = Crossbar;
+        if ( ev.detail !== xb.tMatrix ) { return; }
         // Don't overwrite the stored ruleset with the built-in defaults.
-        if ( µm.temporaryMatrixLoaded !== true ) { return; }
-        vAPI.sessionStorage.set({ temporaryMatrix: µm.tMatrix.toArray() });
+        if ( xb.temporaryMatrixLoaded !== true ) { return; }
+        vAPI.sessionStorage.set({ temporaryMatrix: xb.tMatrix.toArray() });
     });
 }
 
 /******************************************************************************/
 
-µMatrix.loadRecipes = async function(reset) {
+Crossbar.loadRecipes = async function(reset) {
     if ( reset ) {
         this.recipeManager.reset();
     }
@@ -346,7 +346,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
 
     if ( this.userSettings.userRecipes.enabled ) {
         this.recipeManager.fromString(
-            '! uMatrix: Ruleset recipes 1.0\n' +
+            '! Crossbar: Ruleset recipes 1.0\n' +
             this.userSettings.userRecipes.content
         );
     }
@@ -373,7 +373,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
 
 /******************************************************************************/
 
-µMatrix.assetKeysFromImportedAssets = function(raw) {
+Crossbar.assetKeysFromImportedAssets = function(raw) {
     var out = new Set(),
         reIgnore = /^[!#]/,
         reValid = /^[a-z-]+:\/\/\S+\/./,
@@ -388,7 +388,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
 
 /******************************************************************************/
 
-µMatrix.getAvailableHostsFiles = async function() {
+Crossbar.getAvailableHostsFiles = async function() {
     const availableHostsFiles = new Map();
 
     // Custom lists.
@@ -454,7 +454,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
 
 /******************************************************************************/
 
-µMatrix.getAvailableRecipeFiles = async function() {
+Crossbar.getAvailableRecipeFiles = async function() {
     const availableRecipeFiles = new Map();
 
     // Imported recipe resources.
@@ -499,7 +499,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
 
 /******************************************************************************/
 
-µMatrix.loadHostsFiles = async function() {
+Crossbar.loadHostsFiles = async function() {
     let status = await this.hostsFilesSelfie.load();
     // Manifest V3: the blocklist must also exist as declarativeNetRequest
     // rules, which the selfie can't restore.
@@ -536,7 +536,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
 
 /******************************************************************************/
 
-µMatrix.mergeHostsFile = function(details) {
+Crossbar.mergeHostsFile = function(details) {
     const addedCount = this.ubiquitousBlacklistRef.addedCount;
     const addCount = this.ubiquitousBlacklistRef.addCount;
 
@@ -561,7 +561,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
 
 /******************************************************************************/
 
-µMatrix.mergeHostsFileContent = function(rawText) {
+Crossbar.mergeHostsFileContent = function(rawText) {
     const rawEnd = rawText.length;
     const ubiquitousBlacklistRef = this.ubiquitousBlacklistRef;
     const reLocalhost = new RegExp(
@@ -637,7 +637,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
 
 /******************************************************************************/
 
-µMatrix.selectAssets = async function(details) {
+Crossbar.selectAssets = async function(details) {
     const applyAssetSelection = function(
         metadata,
         details,
@@ -645,10 +645,10 @@ if ( vAPI.sessionStorage instanceof Object ) {
         propImportedAssetKeys,
         propInlineAsset
     ) {
-        const µm = µMatrix;
-        const µmus = µm.userSettings;
+        const xb = Crossbar;
+        const xbus = xb.userSettings;
         let selectedAssetKeys = new Set();
-        let importedAssetKeys = new Set(µmus[propImportedAssetKeys]);
+        let importedAssetKeys = new Set(xbus[propImportedAssetKeys]);
 
         if ( Array.isArray(details.toSelect) ) {
             for ( const assetKey of details.toSelect ) {
@@ -661,7 +661,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
         if ( Array.isArray(details.toRemove) ) {
             for ( const assetKey of details.toRemove ) {
                 importedAssetKeys.delete(assetKey);
-                µm.assets.remove(assetKey);
+                xb.assets.remove(assetKey);
             }
         }
 
@@ -687,7 +687,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
                 }
                 return url;
             };
-            const toImport = µm.assetKeysFromImportedAssets(details.toImport);
+            const toImport = xb.assetKeysFromImportedAssets(details.toImport);
             for ( const url of toImport ) {
                 if ( importedAssetKeys.has(url) ) { continue; }
                 const assetKey = assetKeyFromURL(url);
@@ -703,7 +703,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
 
         if ( details.toInline instanceof Object ) {
             const newInline = details.toInline;
-            const oldInline = µmus[propInlineAsset];
+            const oldInline = xbus[propInlineAsset];
             newInline.content = newInline.content.trim();
             if ( newInline.content.length !== 0 ) {
                 newInline.content += '\n';
@@ -717,23 +717,23 @@ if ( vAPI.sessionStorage instanceof Object ) {
                 newInline.enabled !== oldInline.enabled ||
                 newInline.content !== oldInline.content
             ) {
-                µmus[propInlineAsset] = newInline;
+                xbus[propInlineAsset] = newInline;
                 bin[propInlineAsset] = newInline;
             }
         }
     
         selectedAssetKeys = Array.from(selectedAssetKeys).sort();
-        µmus[propSelectedAssetKeys].sort();
-        if ( selectedAssetKeys.join() !== µmus[propSelectedAssetKeys].join() ) {
-            µmus[propSelectedAssetKeys] = selectedAssetKeys;
+        xbus[propSelectedAssetKeys].sort();
+        if ( selectedAssetKeys.join() !== xbus[propSelectedAssetKeys].join() ) {
+            xbus[propSelectedAssetKeys] = selectedAssetKeys;
             bin[propSelectedAssetKeys] = selectedAssetKeys;
             needReload = true;
         }
 
         importedAssetKeys = Array.from(importedAssetKeys).sort();
-        µmus[propImportedAssetKeys].sort();
-        if ( importedAssetKeys.join() !== µmus[propImportedAssetKeys].join() ) {
-            µmus[propImportedAssetKeys] = importedAssetKeys;
+        xbus[propImportedAssetKeys].sort();
+        if ( importedAssetKeys.join() !== xbus[propImportedAssetKeys].join() ) {
+            xbus[propImportedAssetKeys] = importedAssetKeys;
             bin[propImportedAssetKeys] = importedAssetKeys;
             needReload = true;
         }
@@ -773,28 +773,28 @@ if ( vAPI.sessionStorage instanceof Object ) {
 // `switches` contains the preset blacklists for which the switch must be
 // revisited.
 
-µMatrix.reloadHostsFiles = function() {
+Crossbar.reloadHostsFiles = function() {
     this.loadHostsFiles();
 };
 
 /******************************************************************************/
 
-µMatrix.hostsFilesSelfie = (( ) => {
-    const µm = µMatrix;
+Crossbar.hostsFilesSelfie = (( ) => {
+    const xb = Crossbar;
     const magic = 1;
     let timer;
 
     const toSelfie = function() {
-        const trieDetails = µm.ubiquitousBlacklist.optimize();
+        const trieDetails = xb.ubiquitousBlacklist.optimize();
         vAPI.localStorage.setItem(
             'ubiquitousBlacklist.trieDetails',
             JSON.stringify(trieDetails)
         );
-        µm.cacheStorage.set({
+        xb.cacheStorage.set({
             hostsFilesSelfie: {
                 magic,
-                trie: µm.ubiquitousBlacklist.serialize(µm.base64),
-                trieref: µm.ubiquitousBlacklist.compileOne(µm.ubiquitousBlacklistRef),
+                trie: xb.ubiquitousBlacklist.serialize(xb.base64),
+                trieref: xb.ubiquitousBlacklist.compileOne(xb.ubiquitousBlacklistRef),
             }
         });
     };
@@ -807,16 +807,16 @@ if ( vAPI.sessionStorage instanceof Object ) {
                     timer = undefined;
                     toSelfie();
                 },
-                (µm.rawSettings.autoUpdateAssetFetchPeriod + 15) * 1000
+                (xb.rawSettings.autoUpdateAssetFetchPeriod + 15) * 1000
             );
         },
         destroy: function() {
             this.cancel();
-            µm.cacheStorage.remove('hostsFilesSelfie');
+            xb.cacheStorage.remove('hostsFilesSelfie');
         },
         load: async function() {
             this.cancel();
-            const bin = await µm.cacheStorage.get('hostsFilesSelfie');
+            const bin = await xb.cacheStorage.get('hostsFilesSelfie');
             if (
                 bin instanceof Object === false ||
                 bin.hostsFilesSelfie instanceof Object === false ||
@@ -826,11 +826,11 @@ if ( vAPI.sessionStorage instanceof Object ) {
             ) {
                 return false;
             }
-            µm.ubiquitousBlacklist.unserialize(
-                bin.hostsFilesSelfie.trie, µm.base64
+            xb.ubiquitousBlacklist.unserialize(
+                bin.hostsFilesSelfie.trie, xb.base64
             );
-            µm.ubiquitousBlacklistRef =
-                µm.ubiquitousBlacklist.createOne(bin.hostsFilesSelfie.trieref);
+            xb.ubiquitousBlacklistRef =
+                xb.ubiquitousBlacklist.createOne(bin.hostsFilesSelfie.trieref);
             return true;
         },
         cancel: function() {
@@ -844,7 +844,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
 
 /******************************************************************************/
 
-µMatrix.loadPublicSuffixList = async function() {
+Crossbar.loadPublicSuffixList = async function() {
     // TODO: remove once all users are way past 1.4.0.
     this.cacheStorage.remove('publicSuffixListSelfie');
 
@@ -864,17 +864,17 @@ if ( vAPI.sessionStorage instanceof Object ) {
     }
 };
 
-µMatrix.compilePublicSuffixList = function(content) {
+Crossbar.compilePublicSuffixList = function(content) {
     publicSuffixList.parse(content, punycode.toASCII);
     this.assets.put(
         'compiled/' + this.pslAssetKey,
-        publicSuffixList.toSelfie(µMatrix.base64)
+        publicSuffixList.toSelfie(Crossbar.base64)
     );
 };
 
 /******************************************************************************/
 
-µMatrix.scheduleAssetUpdater = (( ) => {
+Crossbar.scheduleAssetUpdater = (( ) => {
     let timer, next = 0;
 
     return function(updateDelay) {
@@ -904,17 +904,17 @@ if ( vAPI.sessionStorage instanceof Object ) {
 
 /******************************************************************************/
 
-µMatrix.assetObserver = function(topic, details) {
-    const µmus = this.userSettings;
+Crossbar.assetObserver = function(topic, details) {
+    const xbus = this.userSettings;
 
     // Do not update filter list if not in use.
     if ( topic === 'before-asset-updated' ) {
         if (
             details.content === 'internal' ||
             details.content === 'filters' &&
-                µmus.selectedHostsFiles.indexOf(details.assetKey) !== -1 ||
+                xbus.selectedHostsFiles.indexOf(details.assetKey) !== -1 ||
             details.content === 'recipes' &&
-                µmus.selectedRecipeFiles.indexOf(details.assetKey) !== -1
+                xbus.selectedRecipeFiles.indexOf(details.assetKey) !== -1
         ) {
             return true;
         }
@@ -924,7 +924,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
     if ( topic === 'after-asset-updated' ) {
         if (
             details.content === 'filters' &&
-            µmus.selectedHostsFiles.indexOf(details.assetKey) !== -1
+            xbus.selectedHostsFiles.indexOf(details.assetKey) !== -1
         ) {
             this.hostsFilesSelfie.destroy();
         } else if ( details.assetKey === this.pslAssetKey ) {
@@ -953,7 +953,7 @@ if ( vAPI.sessionStorage instanceof Object ) {
         if (
             this.arraysIntersect(
                 details.assetKeys,
-                µmus.selectedRecipeFiles
+                xbus.selectedRecipeFiles
             )
         ) {
             this.loadRecipes(true);
@@ -961,13 +961,13 @@ if ( vAPI.sessionStorage instanceof Object ) {
         if (
             this.arraysIntersect(
                 details.assetKeys,
-                µmus.selectedHostsFiles
+                xbus.selectedHostsFiles
             )
         ) {
             this.hostsFilesSelfie.destroy();
             this.loadHostsFiles();
         }
-        if ( µmus.autoUpdate ) {
+        if ( xbus.autoUpdate ) {
             this.scheduleAssetUpdater(25200000);
         } else {
             this.scheduleAssetUpdater(0);

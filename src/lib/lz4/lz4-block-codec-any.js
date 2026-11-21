@@ -47,7 +47,7 @@
 /******************************************************************************/
 
 const wd = (function() {
-    // uMatrix: a service worker has no `document.currentScript`.
+    // Crossbar: a service worker has no `document.currentScript`.
     let url = typeof document === 'object' && document.currentScript
         ? document.currentScript.src
         : new URL('/lib/lz4/lz4-block-codec.js', self.location.href).href;

@@ -40,7 +40,7 @@ jobs:
         run: ./tools/make-${{ matrix.browser }}.sh ${{ github.ref_type == 'tag' && github.ref_name || 'all' }}
       - name: Lint Firefox package
         if: matrix.browser == 'firefox'
-        run: npx --yes web-ext@8 lint --self-hosted --warnings-as-errors -s dist/build/uMatrix.firefox
+        run: npx --yes web-ext@8 lint --self-hosted --warnings-as-errors -s dist/build/crossbar.firefox
       - name: Install test dependencies
         working-directory: tests
         run: npm ci
@@ -52,7 +52,7 @@ jobs:
         run: npm run ${{ matrix.browser == 'firefox' && 'test:firefox' || 'test' }}
       - uses: actions/upload-artifact@v7
         with:
-          name: uMatrix.${{ matrix.browser }}
+          name: crossbar.${{ matrix.browser }}
           path: dist/build/*.${{ matrix.ext }}
           if-no-files-found: error
 

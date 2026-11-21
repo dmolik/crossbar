@@ -50,9 +50,10 @@
 // https://github.com/uBlockOrigin/uBlock-issues/issues/409
 //   Allow forcing the use of webext storage on Firefox.
 
-µMatrix.cacheStorage = (function() {
+Crossbar.cacheStorage = (function() {
 
-    const STORAGE_NAME = 'uMatrixCacheStorage';
+    const STORAGE_NAME = 'crossbarCacheStorage';
+    const LEGACY_STORAGE_NAME = 'uMatrixCacheStorage';
 
     // Default to webext storage.
     const localStorage = webext.storage.local;
@@ -119,7 +120,7 @@
                     disconnect();
                 },
                 Math.max(
-                    µMatrix.rawSettings.autoUpdateAssetFetchPeriod * 2 * 1000,
+                    Crossbar.rawSettings.autoUpdateAssetFetchPeriod * 2 * 1000,
                     180000
                 )
             );
@@ -204,7 +205,7 @@
                 keyvalStore[this.result.key] = this.result.value;
                 if ( this.result.value instanceof Blob === false ) { return; }
                 promises.push(
-                    µMatrix.lz4Codec.decode(
+                    Crossbar.lz4Codec.decode(
                         this.result.key,
                         this.result.value
                     ).then(result => {
@@ -268,7 +269,7 @@
                 keyvalStore[entry.key] = entry.value;
                 if ( entry.value instanceof Blob === false ) { return; }
                 promises.push(
-                    µMatrix.lz4Codec.decode(
+                    Crossbar.lz4Codec.decode(
                         entry.key,
                         entry.value
                     ).then(result => {
@@ -296,7 +297,7 @@
             const promises = [ getDb() ];
             const entries = [];
             const dontCompress =
-                µMatrix.rawSettings.cacheStorageCompression !== true;
+                Crossbar.rawSettings.cacheStorageCompression !== true;
             const handleEncodingResult = result => {
                 entries.push({ key: result.key, value: result.data });
             };
@@ -308,7 +309,7 @@
                     continue;
                 }
                 promises.push(
-                    µMatrix.lz4Codec.encode(key, data).then(handleEncodingResult)
+                    Crossbar.lz4Codec.encode(key, data).then(handleEncodingResult)
                 );
             }
             const finish = ( ) => {
@@ -458,6 +459,13 @@
         } catch(ex) {
         }
     };
+
+    // The cache database used to be named after uMatrix: it is only a
+    // cache, so drop it rather than migrate it.
+    try {
+        indexedDB.deleteDatabase(LEGACY_STORAGE_NAME);
+    } catch(ex) {
+    }
 
     return api;
 }());

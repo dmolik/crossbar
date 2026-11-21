@@ -12,7 +12,7 @@ import puppeteer from 'puppeteer';
 import { startServer } from './server.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const extensionPath = path.resolve(here, process.argv[2] || '../dist/build/uMatrix.firefox');
+const extensionPath = path.resolve(here, process.argv[2] || '../dist/build/crossbar.firefox');
 const PORT = 8643;
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));

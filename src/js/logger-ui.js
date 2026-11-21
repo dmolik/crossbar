@@ -127,7 +127,7 @@ let allTabIdsToken;
 /******************************************************************************/
 /******************************************************************************/
 
-// Emphasize hostname in URL, as this is what matters in uMatrix's rules.
+// Emphasize hostname in URL, as this is what matters in Crossbar's rules.
 
 const nodeFromURL = function(parent, url, re) {
     const fragment = document.createDocumentFragment();

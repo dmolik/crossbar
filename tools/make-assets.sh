@@ -14,7 +14,7 @@ rm -rf $DES
 mkdir -p $DES
 
 cp    ./assets/assets.json $DES/
-cp -R ./assets/umatrix     $DES/
+cp -R ./assets/crossbar     $DES/
 
 # A bundled copy is only a fallback until the first remote update, so a
 # source being unreachable at build time is not fatal.

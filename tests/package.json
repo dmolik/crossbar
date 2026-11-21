@@ -1,7 +1,7 @@
 {
-  "name": "umatrix-tests",
+  "name": "crossbar-tests",
   "private": true,
-  "description": "End-to-end tests for the uMatrix extension builds",
+  "description": "End-to-end tests for the Crossbar extension builds",
   "type": "module",
   "scripts": {
     "test": "node e2e.mjs",

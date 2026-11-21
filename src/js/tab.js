@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a browser extension to black/white list requests.
+    Crossbar - a browser extension to black/white list requests.
     Copyright (C) 2014-2018 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 'use strict';
@@ -28,13 +28,13 @@
 
 /******************************************************************************/
 
-const µm = µMatrix;
+const xb = Crossbar;
 
 // https://github.com/gorhill/httpswitchboard/issues/303
 // Some kind of trick going on here:
 //   Any scheme other than 'http' and 'https' is remapped into a fake
-//   URL which trick the rest of µMatrix into being able to process an
-//   otherwise unmanageable scheme. µMatrix needs web page to have a proper
+//   URL which trick the rest of Crossbar into being able to process an
+//   otherwise unmanageable scheme. Crossbar needs web page to have a proper
 //   hostname to work properly, so just like the 'behind-the-scene'
 //   fake domain name, we map unknown schemes into a fake '{scheme}-scheme'
 //   hostname. This way, for a specific scheme you can create scope with
@@ -43,16 +43,16 @@ const µm = µMatrix;
 /******************************************************************************/
 /******************************************************************************/
 
-µm.normalizePageURL = function(tabId, pageURL) {
+xb.normalizePageURL = function(tabId, pageURL) {
     if ( vAPI.isBehindTheSceneTabId(tabId) ) {
         return 'http://' + this.behindTheSceneScope + '/';
     }
 
     // https://github.com/gorhill/uMatrix/issues/992
     //   Firefox-specific quirk: some top documents are reported by Firefox API
-    //   as loading from `wyciwyg://`, and this breaks uMatrix usability.
+    //   as loading from `wyciwyg://`, and this breaks Crossbar usability.
     //   Firefox should probably made such loading from cache seamless through
-    //   its APIs, but since this is not the case, uMatrix inherits the duty to
+    //   its APIs, but since this is not the case, Crossbar inherits the duty to
     //   make it seamless on its side.
     if ( pageURL.startsWith('wyciwyg:') ) {
         const match = /^wyciwyg:\/\/\d+\//.exec(pageURL);
@@ -152,8 +152,8 @@ housekeep itself.
 
 */
 
-µMatrix.tabContextManager = (( ) => {
-    const µm = µMatrix;
+Crossbar.tabContextManager = (( ) => {
+    const xb = Crossbar;
     const tabContexts = new Map();
 
     // https://github.com/chrisaljoudi/uBlock/issues/1001
@@ -201,8 +201,8 @@ housekeep itself.
             this.gcTimer = null;
         }
         tabContexts.delete(this.tabId);
-        if ( µm.dnr !== undefined ) {
-            µm.dnr.onTabContextRemoved(this.tabId);
+        if ( xb.dnr !== undefined ) {
+            xb.dnr.onTabContextRemoved(this.tabId);
         }
     };
 
@@ -276,23 +276,23 @@ housekeep itself.
             this.rootHostname =
             this.rootDomain = '';
             this.secure = false;
-            if ( µm.dnr !== undefined ) {
-                µm.dnr.onTabContextChanged(this);
+            if ( xb.dnr !== undefined ) {
+                xb.dnr.onTabContextChanged(this);
             }
             return;
         }
         const stackEntry = this.stack[this.stack.length - 1];
         this.rawURL = stackEntry.url;
-        this.normalURL = µm.normalizePageURL(this.tabId, this.rawURL);
-        this.scheme = µm.URI.schemeFromURI(this.rawURL);
-        this.origin = µm.URI.originFromURI(this.normalURL);
-        this.rootHostname = µm.URI.hostnameFromURI(this.origin);
+        this.normalURL = xb.normalizePageURL(this.tabId, this.rawURL);
+        this.scheme = xb.URI.schemeFromURI(this.rawURL);
+        this.origin = xb.URI.originFromURI(this.normalURL);
+        this.rootHostname = xb.URI.hostnameFromURI(this.origin);
         this.rootDomain =
-            µm.URI.domainFromHostname(this.rootHostname) ||
+            xb.URI.domainFromHostname(this.rootHostname) ||
             this.rootHostname;
-         this.secure = µm.URI.isSecureScheme(this.scheme);
-        if ( µm.dnr !== undefined ) {
-            µm.dnr.onTabContextChanged(this);
+         this.secure = xb.URI.isSecureScheme(this.scheme);
+        if ( xb.dnr !== undefined ) {
+            xb.dnr.onTabContextChanged(this);
         }
     };
 
@@ -328,18 +328,18 @@ housekeep itself.
     };
 
     TabContext.prototype.getNetFilteringSwitch = function() {
-        if ( this.netFilteringReadTime > µm.netWhitelistModifyTime ) {
+        if ( this.netFilteringReadTime > xb.netWhitelistModifyTime ) {
             return this.netFiltering;
         }
         // https://github.com/chrisaljoudi/uBlock/issues/1078
         // Use both the raw and normalized URLs.
-        this.netFiltering = µm.getNetFilteringSwitch(this.normalURL);
+        this.netFiltering = xb.getNetFilteringSwitch(this.normalURL);
         if (
             this.netFiltering &&
             this.rawURL !== this.normalURL &&
             this.rawURL !== ''
         ) {
-            this.netFiltering = µm.getNetFilteringSwitch(this.rawURL);
+            this.netFiltering = xb.getNetFilteringSwitch(this.rawURL);
         }
         this.netFilteringReadTime = Date.now();
         return this.netFiltering;
@@ -417,10 +417,10 @@ housekeep itself.
         const entry = new TabContext(vAPI.noTabId);
         entry.stack.push(new StackEntry('', true));
         entry.rawURL = '';
-        entry.normalURL = µm.normalizePageURL(entry.tabId);
-        entry.origin = µm.URI.originFromURI(entry.normalURL);
-        entry.rootHostname = µm.URI.hostnameFromURI(entry.origin);
-        entry.rootDomain = µm.URI.domainFromHostname(entry.rootHostname);
+        entry.normalURL = xb.normalizePageURL(entry.tabId);
+        entry.origin = xb.URI.originFromURI(entry.normalURL);
+        entry.rootHostname = xb.URI.hostnameFromURI(entry.origin);
+        entry.rootDomain = xb.URI.domainFromHostname(entry.rootHostname);
     }
 
     // Context object, typically to be used to feed filtering engines.
@@ -472,20 +472,20 @@ vAPI.Tabs = class extends vAPI.Tabs {
         super.onActivated(details);
         if ( vAPI.isBehindTheSceneTabId(details.tabId) ) { return; }
         // https://github.com/uBlockOrigin/uBlock-issues/issues/680
-        µMatrix.updateToolbarIcon(details.tabId);
-        //µMatrix.contextMenu.update(details.tabId);
+        Crossbar.updateToolbarIcon(details.tabId);
+        //Crossbar.contextMenu.update(details.tabId);
     }
 
     onClosed(tabId) {
         super.onClosed(tabId);
         if ( vAPI.isBehindTheSceneTabId(tabId) ) { return; }
-        µMatrix.unbindTabFromPageStats(tabId);
-        //µMatrix.contextMenu.update();
+        Crossbar.unbindTabFromPageStats(tabId);
+        //Crossbar.contextMenu.update();
     }
 
     onCreated(details) {
         super.onCreated(details);
-        µMatrix.tabContextManager.onTabCreated(details);
+        Crossbar.tabContextManager.onTabCreated(details);
     }
 
     // When the DOM content of root frame is loaded, this means the tab
@@ -500,15 +500,15 @@ vAPI.Tabs = class extends vAPI.Tabs {
 
     onNavigation(details) {
         super.onNavigation(details);
-        const µm = µMatrix;
+        const xb = Crossbar;
         if ( details.frameId === 0 ) {
-            µm.tabContextManager.commit(details.tabId, details.url);
-            µm.bindTabToPageStats(details.tabId, 'tabCommitted');
+            xb.tabContextManager.commit(details.tabId, details.url);
+            xb.bindTabToPageStats(details.tabId, 'tabCommitted');
         }
-        if ( µm.canInjectScriptletsNow ) {
-            const pageStore = µm.pageStoreFromTabId(details.tabId);
+        if ( xb.canInjectScriptletsNow ) {
+            const pageStore = xb.pageStoreFromTabId(details.tabId);
             if ( pageStore !== null && pageStore.getNetFilteringSwitch() ) {
-                µm.scriptletFilteringEngine.injectNow(details);
+                xb.scriptletFilteringEngine.injectNow(details);
             }
         }
     }
@@ -521,11 +521,11 @@ vAPI.Tabs = class extends vAPI.Tabs {
         super.onUpdated(tabId, changeInfo, tab);
         if ( typeof tab.url !== 'string' || tab.url === '' ) { return; }
         if ( typeof changeInfo.url === 'string' && changeInfo.url !== '' ) {
-            µMatrix.tabContextManager.commit(tabId, changeInfo.url);
-            µMatrix.bindTabToPageStats(tabId, 'tabUpdated');
+            Crossbar.tabContextManager.commit(tabId, changeInfo.url);
+            Crossbar.bindTabToPageStats(tabId, 'tabUpdated');
         }
         if ( typeof changeInfo.title === 'string' && changeInfo.title !== '' ) {
-            µMatrix.setPageStoreTitle(tabId, changeInfo.title);
+            Crossbar.setPageStoreTitle(tabId, changeInfo.title);
         }
     }
 };
@@ -537,7 +537,7 @@ vAPI.tabs = new vAPI.Tabs();
 
 // Create an entry for the tab if it doesn't exist
 
-µm.bindTabToPageStats = function(tabId, context) {
+xb.bindTabToPageStats = function(tabId, context) {
     this.updateToolbarIcon(tabId);
 
     // Do not create a page store for URLs which are of no interests
@@ -595,7 +595,7 @@ vAPI.tabs = new vAPI.Tabs();
 
 /******************************************************************************/
 
-µm.unbindTabFromPageStats = function(tabId) {
+xb.unbindTabFromPageStats = function(tabId) {
     if ( vAPI.isBehindTheSceneTabId(tabId) ) { return; }
 
     const pageStore = this.pageStores.get(tabId);
@@ -627,7 +627,7 @@ vAPI.tabs = new vAPI.Tabs();
 
 /******************************************************************************/
 
-µm.resurrectPageStore = function(tabId, pageURL) {
+xb.resurrectPageStore = function(tabId, pageURL) {
     let pageStoreCrypt = this.pageStoreCemetery.get(tabId);
     if ( pageStoreCrypt === undefined ) { return null; }
 
@@ -650,7 +650,7 @@ vAPI.tabs = new vAPI.Tabs();
 
 /******************************************************************************/
 
-µm.incineratePageStore = function(tabId, pageURL) {
+xb.incineratePageStore = function(tabId, pageURL) {
     let pageStoreCrypt = this.pageStoreCemetery.get(tabId);
     if ( pageStoreCrypt === undefined ) { return; }
 
@@ -672,18 +672,18 @@ vAPI.tabs = new vAPI.Tabs();
 
 /******************************************************************************/
 
-µm.pageStoreFromTabId = function(tabId) {
+xb.pageStoreFromTabId = function(tabId) {
     return this.pageStores.get(tabId) || null;
 };
 
 // Never return null
-µm.mustPageStoreFromTabId = function(tabId) {
+xb.mustPageStoreFromTabId = function(tabId) {
     return this.pageStores.get(tabId) || this.pageStores.get(vAPI.noTabId);
 };
 
 /******************************************************************************/
 
-µm.setPageStoreTitle = function(tabId, title) {
+xb.setPageStoreTitle = function(tabId, title) {
     const pageStore = this.pageStoreFromTabId(tabId);
     if ( pageStore === null ) { return; }
     if ( title === pageStore.title ) { return; }
@@ -693,14 +693,14 @@ vAPI.tabs = new vAPI.Tabs();
 
 /******************************************************************************/
 
-µm.forceReload = function(tabId, bypassCache) {
+xb.forceReload = function(tabId, bypassCache) {
     vAPI.tabs.reload(tabId, bypassCache);
 };
 
 /******************************************************************************/
 
-µMatrix.updateToolbarIcon = (( ) => {
-    const µm = µMatrix;
+Crossbar.updateToolbarIcon = (( ) => {
+    const xb = Crossbar;
     const tabIdToDetails = new Map();
 
     const updateBadge = tabId => {
@@ -711,7 +711,7 @@ vAPI.tabs = new vAPI.Tabs();
         let color = '#666';
         let iconId = 'off';
 
-        let pageStore = µm.pageStoreFromTabId(tabId);
+        let pageStore = xb.pageStoreFromTabId(tabId);
         if ( pageStore !== null ) {
             const totalBlocked = pageStore.perLoadBlockedRequestCount;
             const total = pageStore.perLoadAllowedRequestCount + totalBlocked;
@@ -727,12 +727,12 @@ vAPI.tabs = new vAPI.Tabs();
                 iconId = squareSize;
             }
             if ( totalBlocked !== 0 && (parts & 0b0010) !== 0 ) {
-                badge = µm.formatCount(totalBlocked);
+                badge = xb.formatCount(totalBlocked);
             }
         }
 
         // https://www.reddit.com/r/uBlockOrigin/comments/d33d37/
-        if ( µm.userSettings.iconBadgeEnabled === false ) {
+        if ( xb.userSettings.iconBadgeEnabled === false ) {
             parts |= 0b1000;
         }
 
@@ -781,11 +781,11 @@ vAPI.tabs = new vAPI.Tabs();
     let cleanupSampleAt = 0;
 
     const cleanup = function() {
-        const tabIds = Array.from(µm.pageStores.keys()).sort();
+        const tabIds = Array.from(xb.pageStores.keys()).sort();
         const checkTab = function(tabId) {
             vAPI.tabs.get(tabId).then(tab => {
                 if ( tab instanceof Object ) { return; }
-                µm.unbindTabFromPageStats(tabId);
+                xb.unbindTabFromPageStats(tabId);
             });
         };
         if ( cleanupSampleAt >= tabIds.length ) {

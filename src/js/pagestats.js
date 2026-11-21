@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a browser extension to black/white list requests.
+    Crossbar - a browser extension to black/white list requests.
     Copyright (C) 2013-2018 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -16,18 +16,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 'use strict';
 
 /******************************************************************************/
 
-µMatrix.pageStoreFactory = (( ) => {
+Crossbar.pageStoreFactory = (( ) => {
 
 /******************************************************************************/
 
-const µm = µMatrix;
+const xb = Crossbar;
 
 /******************************************************************************/
 
@@ -97,7 +97,7 @@ BlockedCollapsibles.prototype.shelfLife = 10 * 1000;
 // Ref: Given a URL, returns a (somewhat) unique 32-bit value
 // Based on: FNV32a
 // http://www.isthe.com/chongo/tech/comp/fnv/index.html#FNV-reference-source
-// The rest is custom, suited for uMatrix.
+// The rest is custom, suited for Crossbar.
 
 const PageStore = class {
     constructor(tabContext) {
@@ -163,7 +163,7 @@ const PageStore = class {
     }
 
     lookupBlockedCollapsibles(request, response) {
-        const tabContext = µm.tabContextManager.lookup(this.tabId);
+        const tabContext = xb.tabContextManager.lookup(this.tabId);
         if ( tabContext === null ) { return; }
 
         if (
@@ -172,7 +172,7 @@ const PageStore = class {
         ) {
             const roothn = tabContext.rootHostname;
             const hnFromURI = vAPI.hostnameFromURI;
-            const tMatrix = µm.tMatrix;
+            const tMatrix = xb.tMatrix;
             for ( const entry of request.toFilter ) {
                 if ( tMatrix.mustBlock(roothn, hnFromURI(entry.url), entry.type) ) {
                     this.blockedCollapsibles.add(
@@ -187,8 +187,8 @@ const PageStore = class {
         if ( this.blockedCollapsibles.hash === response.hash ) { return; }
         response.hash = this.blockedCollapsibles.hash;
 
-        const collapseBlacklisted = µm.userSettings.collapseBlacklisted;
-        const collapseBlocked = µm.userSettings.collapseBlocked;
+        const collapseBlacklisted = xb.userSettings.collapseBlacklisted;
+        const collapseBlocked = xb.userSettings.collapseBlocked;
         const blockedResources = response.blockedResources;
 
         for ( const entry of this.blockedCollapsibles.blocked ) {
@@ -224,7 +224,7 @@ const PageStore = class {
         if ( uids.has(uid) ) { return; }
         uids.add(uid);
 
-        µm.updateToolbarIcon(this.tabId);
+        xb.updateToolbarIcon(this.tabId);
 
         this.mtxCountModifiedTime = Date.now();
 

@@ -1,10 +1,10 @@
-uMatrix: Un cortafuegos matricial ajustable mediante clics, con varias herramientas para mejorar su privacidad. 
+Crossbar: Un cortafuegos matricial ajustable mediante clics, con varias herramientas para mejorar su privacidad. 
 
 *Para usuarios avanzados*
 
-uMatrix le proporciona control total sobre su navegador, permitiéndole decidir que conexiones se establecen, que tipo de datos se descargan y que códigos se ejecutan. Nadie más decide: usted escoge. Usted está en control total de su privacidad.
+Crossbar le proporciona control total sobre su navegador, permitiéndole decidir que conexiones se establecen, que tipo de datos se descargan y que códigos se ejecutan. Nadie más decide: usted escoge. Usted está en control total de su privacidad.
 
-Por defecto, uMatrix funciona en modo relajado "bloquear todo/permitir excepcionalmente". Esto significa que los sitios que requieren scripts de terceros, posiblemente se muestren con problemas. Con solo dos clics, puede configurar uMatrix para funcionar en modo "permitir todo/bloquear excepcionalmente", lo que hará que usualmente los sitios web se muestren sin problema. Para más detalles sobre el tema, consulte https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views (en inglés).
+Por defecto, Crossbar funciona en modo relajado "bloquear todo/permitir excepcionalmente". Esto significa que los sitios que requieren scripts de terceros, posiblemente se muestren con problemas. Con solo dos clics, puede configurar Crossbar para funcionar en modo "permitir todo/bloquear excepcionalmente", lo que hará que usualmente los sitios web se muestren sin problema. Para más detalles sobre el tema, consulte https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views (en inglés).
 
 * Examine TODAS las conexiones remotas, fallidas o intentadas, según fueron bloqueadas o permitidas (usted decide).
 
@@ -14,7 +14,7 @@ Por defecto, uMatrix funciona en modo relajado "bloquear todo/permitir excepcion
 
 * No tiene que depender de una sola lista de filtros (probablemente con muchas omisiones) fuera de la cual nada pueda ser bloqueado:  usted controla todo.
 
-* Facilidad de uso: uMatrix le permite agregar fácilmente las peticiones de red que se originen desde una página web a una lista de permitidos/lista negra, mediante clics en la matriz:
+* Facilidad de uso: Crossbar le permite agregar fácilmente las peticiones de red que se originen desde una página web a una lista de permitidos/lista negra, mediante clics en la matriz:
 
 - nombres de dominio (columna izquierda)
   * de muy específico
@@ -32,7 +32,7 @@ Por defecto, uMatrix funciona en modo relajado "bloquear todo/permitir excepcion
 
 Puede agregar a la lista negra/lista de permitidos una única celda, una fila completa, un grupo de filas, una columna o toda la matriz, todo con solo un clic.
 
-El motor de filtrado de uMatrix usa lógica de precedencia para evaluar que bloquea o permite, en dependencia de las celdas en lista de permitidos o lista negra. Por ejemplo, puede agregar toda una página a la lista de permitidos con un clic, sin que sea necesario agregar nuevos elementos que puedan aparecer luego en dicha página uno a uno.
+El motor de filtrado de Crossbar usa lógica de precedencia para evaluar que bloquea o permite, en dependencia de las celdas en lista de permitidos o lista negra. Por ejemplo, puede agregar toda una página a la lista de permitidos con un clic, sin que sea necesario agregar nuevos elementos que puedan aparecer luego en dicha página uno a uno.
 
 Todas las reglas se definen para un ámbito. Puede, por ejemplo, bloquear elementos de `facebook.com` y `facebook.net` dondequiera, excepto cuando esté navegando en una página en el sitio`www.facebook.com`. De esta forma, Facebook se verá imposibilitado de crear o reunir un perfil sobre sus hábitos de navegación web.
 
@@ -76,6 +76,6 @@ Esta extensión también puede ser útil si desea aumentar la velocidad de naveg
 
 ERRORES, PROBLEMAS: https://github.com/gorhill/uMatrix/issues
 
-CÓDIGO FUENTE: https://github.com/gorhill/uMatrix (GPLv3)
+CÓDIGO FUENTE: https://github.com/dmolik/crossbar (GPLv3)
 
-REGISTRO DE CAMBIOS: https://github.com/gorhill/uMatrix/releases
+REGISTRO DE CAMBIOS: https://github.com/dmolik/crossbar/releases

@@ -1,8 +1,8 @@
-uMatrix: Eine Matrix-basierte Firewall, einfach per Mausklick zu bedienen - und mit vielen Extras, um deine Privatsphäre zu schützen. Für fortgeschrittene Benutzer.
+Crossbar: Eine Matrix-basierte Firewall, einfach per Mausklick zu bedienen - und mit vielen Extras, um deine Privatsphäre zu schützen. Für fortgeschrittene Benutzer.
 
-uMatrix gibt dir volle Kontrolle darüber, womit sich dein Browser verbindet, welche Art von Daten erlaubt sind und was ausgeführt werden darf. Du lässt niemand anderen für dich entscheiden: Du entscheidest. Du hast die volle Kontrolle über deine Privatsphäre.
+Crossbar gibt dir volle Kontrolle darüber, womit sich dein Browser verbindet, welche Art von Daten erlaubt sind und was ausgeführt werden darf. Du lässt niemand anderen für dich entscheiden: Du entscheidest. Du hast die volle Kontrolle über deine Privatsphäre.
 
-Voreingestellt arbeitet uMatrix in einem gelockerten "blockiere alles/erlaube ausnahmsweise"-Modus, was dazu führt, dass viele Webseiten, die Skripte von Drittseiten benötigen, "kaputt" sein werden. Mit zwei Klicks kannst du aber dafür sorgen, dass uMatrix in einem "erlaube alles/blockiere ausnahmsweise"-Modus arbeitet, der normalerweise Webseiten nicht kaputt macht. Details dazu auf https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views for more details on this topic.
+Voreingestellt arbeitet Crossbar in einem gelockerten "blockiere alles/erlaube ausnahmsweise"-Modus, was dazu führt, dass viele Webseiten, die Skripte von Drittseiten benötigen, "kaputt" sein werden. Mit zwei Klicks kannst du aber dafür sorgen, dass Crossbar in einem "erlaube alles/blockiere ausnahmsweise"-Modus arbeitet, der normalerweise Webseiten nicht kaputt macht. Details dazu auf https://github.com/gorhill/httpswitchboard/wiki/How-to-use-HTTP-Switchboard:-Two-opposing-views for more details on this topic.
 
 * Sieh ALLE Verbindungen, ob fehlgeschlagen oder erfolgreich, je nachdem ob du sie blockiert oder erlaubt hast (deine Entscheidung).
 
@@ -12,7 +12,7 @@ Voreingestellt arbeitet uMatrix in einem gelockerten "blockiere alles/erlaube au
 
 * Du musst dich nicht ausschließlich auf irgendeine externe Blacklist (vermutlich mit vielen fehlenden Einträgen) verlassen, die nur unvollständig blockiert: Du selbst hast die volle Kontrolle.
 
-* Bedienungsfreundlich: uMatrix erlaubt es dir auf einfache Art, Netzanfragen einer Webseite in einer klickbaren Matrix zu erlauben (whitelist)/blockieren (blacklist):
+* Bedienungsfreundlich: Crossbar erlaubt es dir auf einfache Art, Netzanfragen einer Webseite in einer klickbaren Matrix zu erlauben (whitelist)/blockieren (blacklist):
 
 - Domain-Namen (linke Spalte)
     * sehr spezifische
@@ -30,7 +30,7 @@ Voreingestellt arbeitet uMatrix in einem gelockerten "blockiere alles/erlaube au
 
 Du kannst eine einzelne Zelle erlauben/blockieren, eine ganze Zeile, eine Gruppe von Zeilen, eine ganze Spalte, oder sogar die komplette Matrix mit gerade mal einem Klick.
 
-Das Filtermodul von uMatrix arbeitet nach einer logischen Rangordnung, um zu beurteilen, was blockiert/erlaubt werden soll, je nachdem, welche Zellen blockiert/erlaubt sind. Zum Beispiel erlaubt dir dies, eine komplette Seite zu erlauben, ohne dass du wiederholt neue Daten separat erlauben musst.
+Das Filtermodul von Crossbar arbeitet nach einer logischen Rangordnung, um zu beurteilen, was blockiert/erlaubt werden soll, je nachdem, welche Zellen blockiert/erlaubt sind. Zum Beispiel erlaubt dir dies, eine komplette Seite zu erlauben, ohne dass du wiederholt neue Daten separat erlauben musst.
 
 Alle Regeln beziehen sich auf einen bestimmten Geltungsbereich. Zum Beispiel kannst du `facebook.com` und `facebook.net` überall blockieren, außer wenn du eine Seite auf `www.facebook.com` besuchst. Dadurch wird Facebook nicht in der Lage sein, eine Profil deiner Surfgewohnheiten anzulegen.
 
@@ -74,6 +74,6 @@ Diese Erweiterung ist auch nützlich, um das Surfen zu beschleunigen, indem z.B.
 
 FEHLER, PROBLEME: https://github.com/gorhill/uMatrix/issues
 
-QUELLCODE: https://github.com/gorhill/uMatrix (GPLv3)
+QUELLCODE: https://github.com/dmolik/crossbar (GPLv3)
 
-ÄNDERUNGSPROTOKOLL: https://github.com/gorhill/uMatrix/releases
+ÄNDERUNGSPROTOKOLL: https://github.com/dmolik/crossbar/releases

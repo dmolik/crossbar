@@ -2,6 +2,6 @@
 #
 # This script assumes a linux environment
 
-echo "*** uMatrix(Chromium): Cleaning."
+echo "*** Crossbar(Chromium): Cleaning."
 rm -rf ./dist/build
-echo "*** uMatrix(Chromium): Cleaned."
+echo "*** Crossbar(Chromium): Cleaned."

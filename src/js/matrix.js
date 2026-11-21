@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-    uMatrix - a browser extension to black/white list requests.
+    Crossbar - a browser extension to black/white list requests.
     Copyright (C) 2014-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uMatrix
+    Home: https://github.com/dmolik/crossbar
 */
 
 /* global punycode */
@@ -25,11 +25,11 @@
 
 /******************************************************************************/
 
-µMatrix.Matrix = (( ) => {
+Crossbar.Matrix = (( ) => {
 
 /******************************************************************************/
 
-const µm = µMatrix;
+const xb = Crossbar;
 const selfieVersion = 1;
 
 /******************************************************************************/
@@ -191,9 +191,9 @@ const extractFirstPartyDesDomain = function(srcHostname, desHostname) {
     ) {
         return '';
     }
-    var µmuri = µm.URI;
-    var srcDomain = µmuri.domainFromHostname(srcHostname) || srcHostname;
-    var desDomain = µmuri.domainFromHostname(desHostname) || desHostname;
+    var xburi = xb.URI;
+    var srcDomain = xburi.domainFromHostname(srcHostname) || srcHostname;
+    var desDomain = xburi.domainFromHostname(desHostname) || desHostname;
     return desDomain === srcDomain ? desDomain : '';
 };
 
@@ -390,7 +390,7 @@ Matrix.prototype.evaluateCellZ = function(srcHostname, desHostname, type) {
     // Preset blacklisted hostnames are blacklisted in global scope
     // https://github.com/uBlockOrigin/uMatrix-issues/issues/284
     //   Only consider hostname blocklisted if it's a full match.
-    if ( type === '*' && µm.ubiquitousBlacklistRef.matches(desHostname) === 0 ) {
+    if ( type === '*' && xb.ubiquitousBlacklistRef.matches(desHostname) === 0 ) {
         return 1;
     }
 
