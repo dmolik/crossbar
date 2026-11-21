@@ -3,7 +3,8 @@
 //
 //   ./tools/make-chromium.sh && (cd tests && npm run screenshots)
 //
-// Output goes to doc/store/screenshots/.
+// Output goes to doc/store/screenshots/, including the GitHub social preview
+// and the README screenshot.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -122,6 +123,17 @@ try {
         popupImage
     ));
     await composer.screenshot({ path: path.join(outDir, '1-popup.png') });
+
+    // GitHub social preview (upload in the repository settings).
+    await composer.setViewport({ width: 1280, height: 640 });
+    await composer.setContent(frame(1280, 640,
+        'A point-and-click, matrix-based browser firewall.',
+        popupImage
+    ));
+    await composer.screenshot({ path: path.join(outDir, 'github-social-1280x640.png') });
+
+    // The bare popup, for the README.
+    fs.writeFileSync(path.join(outDir, 'popup.png'), Buffer.from(popupImage, 'base64'));
 
     await logger.bringToFront();
     await sleep(1000);

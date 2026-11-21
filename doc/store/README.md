@@ -1,6 +1,6 @@
 # Store listings
 
-Text and images for the Chrome Web Store and addons.mozilla.org (AMO) listings. Regenerate the screenshots with `./tools/make-chromium.sh && (cd tests && npm run screenshots)`. The icon source is `src/img/icon.svg`; regenerate the PNGs with `cd tests && npm run icons`.
+Text and images for the Chrome Web Store, Microsoft Edge Add-ons and addons.mozilla.org (AMO) listings. Edge uses the Chrome Web Store text and images, and the same package. Regenerate the screenshots with `./tools/make-chromium.sh && (cd tests && npm run screenshots)`. The icon source is `src/img/icon.svg`; regenerate the PNGs with `cd tests && npm run icons`.
 
 - Icon: `src/img/icon_128.png`
 - Screenshots (1280×800): `screenshots/1-popup.png`, `screenshots/2-logger.png`, `screenshots/3-rules.png`
@@ -90,4 +90,12 @@ Publishing runs from `.github/workflows/publish.yml` once these repository secre
 3. Fill the store listing and privacy practices tabs from this file, and submit it for review.
 4. For later releases, create OAuth credentials for the Chrome Web Store API (see <https://github.com/fregante/chrome-webstore-upload-keys>), then add the secrets `CWS_EXTENSION_ID`, `CWS_PUBLISHER_ID`, `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET` and `CWS_REFRESH_TOKEN`.
 
-After that, publishing a draft release that CI created submits it to both stores.
+**Microsoft Edge Add-ons**
+1. Register at <https://partner.microsoft.com/dashboard/microsoftedge/> (free).
+2. Create the extension by uploading the same root-level zip as for Chrome, and fill the listing from this file: the description, the screenshots, the promo tile, and the privacy policy URL.
+3. In Partner Center, under *Microsoft Edge* → *Publish API*, enable the new experience and create API credentials. The API key expires: note the date.
+4. Add the secrets `EDGE_PRODUCT_ID` (in the extension's URL in Partner Center), `EDGE_CLIENT_ID` and `EDGE_API_KEY`.
+
+`tools/publish-edge.sh` does the upload. Microsoft's docs disagree on the format of the certification notes; it sends `{"notes": "…"}` as JSON, so check the first automated Edge submission.
+
+After that, publishing a draft release that CI created submits it to all three stores.

@@ -1,6 +1,7 @@
 name: Publish
 
-# Submits a release to the Chrome Web Store and addons.mozilla.org. Runs when
+# Submits a release to the Chrome Web Store, Microsoft Edge Add-ons and
+# addons.mozilla.org. Runs when
 # a (draft) release created by CI is published, or by hand. Each store is
 # skipped until its secrets are set (see doc/store/README.md).
 #
@@ -88,3 +89,25 @@ jobs:
       - name: Chrome Web Store secrets not set
         if: env.EXTENSION_ID == ''
         run: echo "::notice::CWS_* secrets not set, skipped the Chrome Web Store"
+
+  edge:
+    runs-on: ubuntu-latest
+    env:
+      EDGE_PRODUCT_ID: ${{ secrets.EDGE_PRODUCT_ID }}
+      EDGE_CLIENT_ID: ${{ secrets.EDGE_CLIENT_ID }}
+      EDGE_API_KEY: ${{ secrets.EDGE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.TAG }}
+      - name: Build
+        run: ./tools/make-chromium.sh "$TAG"
+      - name: Upload and submit to Microsoft Edge Add-ons
+        if: env.EDGE_PRODUCT_ID != ''
+        run: |
+          (cd dist/build/crossbar.chromium && zip -qr ../crossbar-edge.zip .)
+          ./tools/publish-edge.sh dist/build/crossbar-edge.zip \
+            "Release $TAG: https://github.com/${{ github.repository }}/releases/tag/$TAG"
+      - name: Edge secrets not set
+        if: env.EDGE_PRODUCT_ID == ''
+        run: echo "::notice::EDGE_* secrets not set, skipped Microsoft Edge Add-ons"

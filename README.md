@@ -1,8 +1,22 @@
-## Crossbar<br>[![CI](https://github.com/dmolik/crossbar/actions/workflows/ci.yml/badge.svg)](https://github.com/dmolik/crossbar/actions/workflows/ci.yml)
+<p align="center">
+  <img src="src/img/icon.svg" width="96" height="96" alt="">
+</p>
+
+<h1 align="center">Crossbar</h1>
+
+<p align="center">
+  <a href="https://github.com/dmolik/crossbar/actions/workflows/ci.yml"><img src="https://github.com/dmolik/crossbar/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/dmolik/crossbar/releases"><img src="https://img.shields.io/github/v/release/dmolik/crossbar?include_prereleases&sort=semver" alt="Release"></a>
+  <a href="LICENSE.txt"><img src="https://img.shields.io/badge/license-GPLv3-blue" alt="GPLv3"></a>
+</p>
 
 A point-and-click, matrix-based firewall for your browser: you decide, for each site you visit, which other sites it may connect to and what kind of content (cookies, CSS, images, media, scripts, XHR, frames…) each of them may send.
 
 Definitely for advanced users.
+
+<p align="center">
+  <img src="doc/store/screenshots/popup.png" width="560" alt="The Crossbar popup: a matrix of the sites a page contacted, by request type, with blocked cells in red and allowed cells in green">
+</p>
 
 Crossbar is a maintained fork of [uMatrix](https://github.com/gorhill/uMatrix) by Raymond Hill, which was archived in 2021. It was renamed so it isn't mistaken for the original. uMatrix was itself forked and refactored from [HTTP Switchboard](https://github.com/gorhill/httpswitchboard).
 
