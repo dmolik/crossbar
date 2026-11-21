@@ -13,8 +13,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
       - run: npx --yes jshint@2.13.6 --config .jshintrc src/js/*.js platform/chromium/*.js platform/firefox/*.js
@@ -30,8 +30,8 @@ jobs:
           - browser: firefox
             ext: xpi
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -46,11 +46,11 @@ jobs:
         run: npm ci
       - name: Install browser
         working-directory: tests
-        run: npx puppeteer browsers install ${{ matrix.browser == 'firefox' && 'firefox@stable' || 'chrome' }}
+        run: npx puppeteer browsers install ${{ matrix.browser == 'firefox' && 'firefox' || 'chrome' }}
       - name: End-to-end tests
         working-directory: tests
         run: npm run ${{ matrix.browser == 'firefox' && 'test:firefox' || 'test' }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: uMatrix.${{ matrix.browser }}
           path: dist/build/*.${{ matrix.ext }}
@@ -63,7 +63,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: dist
           merge-multiple: true
