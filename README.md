@@ -1,14 +1,6 @@
-<p align="center">
-  <img src="src/img/icon.svg" width="96" height="96" alt="">
-</p>
+# <img src="src/img/icon.svg" width="36" height="36" alt=""> Crossbar
 
-<h1 align="center">Crossbar</h1>
-
-<p align="center">
-  <a href="https://github.com/dmolik/crossbar/actions/workflows/ci.yml"><img src="https://github.com/dmolik/crossbar/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/dmolik/crossbar/releases"><img src="https://img.shields.io/github/v/release/dmolik/crossbar?include_prereleases&sort=semver" alt="Release"></a>
-  <a href="LICENSE.txt"><img src="https://img.shields.io/badge/license-GPLv3-blue" alt="GPLv3"></a>
-</p>
+[![CI](https://github.com/dmolik/crossbar/actions/workflows/ci.yml/badge.svg)](https://github.com/dmolik/crossbar/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/dmolik/crossbar?include_prereleases&sort=semver)](https://github.com/dmolik/crossbar/releases) [![GPLv3](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE.txt)
 
 A point-and-click, matrix-based firewall for your browser: you decide, for each site you visit, which other sites it may connect to and what kind of content (cookies, CSS, images, media, scripts, XHR, frames…) each of them may send.
 
