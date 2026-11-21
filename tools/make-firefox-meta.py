@@ -21,7 +21,7 @@ with open(webext_manifest_file) as f:
     webext_manifest = json.load(f)
 
 webext_manifest['version'] = version
-match = re.search('^\d+\.\d+\.\d+(b|rc)', version)
+match = re.search(r'^\d+\.\d+\.\d+(b|rc)', version)
 if not match:
     # https://bugzilla.mozilla.org/show_bug.cgi?id=1459007
     # By design Firefox opens the sidebar with new installation of

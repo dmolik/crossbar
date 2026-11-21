@@ -33,7 +33,7 @@ for key in chromium_manifest:
         opera_manifest[key] = chromium_manifest[key]
 
 # Development build? If so, modify name accordingly.
-match = re.search('^(\d+\.\d+\.\d+)(\.|b|rc)(\d+)$', version)
+match = re.search(r'^(\d+\.\d+\.\d+)(\.|b|rc)(\d+)$', version)
 if match:
     version = match.group(1)
     revision = int(match.group(3))
