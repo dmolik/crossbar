@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # This script assumes a linux environment
+
+set -euo pipefail
 
 echo "*** uMatrix(Chromium): Creating package"
 echo "*** uMatrix(Chromium): Copying files"
@@ -20,13 +22,14 @@ cp    LICENSE.txt                       $DES/
 
 echo "*** uMatrix.chromium: Generating meta..."
 python3 tools/make-chromium-meta.py $DES/
+python3 tools/make-mv3-sw.py $DES/
 
-if [ "$1" = all ]; then
+if [ "${1:-}" = all ]; then
     echo "*** uMatrix.chromium: Creating package..."
     pushd $(dirname $DES/)
     zip uMatrix.chromium.zip -qr $(basename $DES/)/*
     popd
-elif [ -n "$1" ]; then
+elif [ -n "${1:-}" ]; then
     echo "*** uMatrix.chromium: Creating versioned package..."
     pushd $(dirname $DES/) > /dev/null
     zip uMatrix_"$1".chromium.zip -qr $(basename $DES/)/*

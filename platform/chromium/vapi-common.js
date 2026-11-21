@@ -44,7 +44,7 @@ vAPI.webextFlavor = {
     const flavor = vAPI.webextFlavor;
     const soup = flavor.soup;
     const dispatch = function() {
-        window.dispatchEvent(new CustomEvent('webextFlavor'));
+        self.dispatchEvent(new CustomEvent('webextFlavor'));
     };
 
     // This is always true.
@@ -192,12 +192,14 @@ vAPI.getURL = browser.runtime.getURL;
 vAPI.i18n = browser.i18n.getMessage;
 
 // http://www.w3.org/International/questions/qa-scripts#directions
-document.body.setAttribute(
-    'dir',
-    ['ar', 'he', 'fa', 'ps', 'ur'].indexOf(vAPI.i18n('@@ui_locale')) !== -1
-        ? 'rtl'
-        : 'ltr'
-);
+if ( typeof document === 'object' && document.body instanceof Object ) {
+    document.body.setAttribute(
+        'dir',
+        ['ar', 'he', 'fa', 'ps', 'ur'].indexOf(vAPI.i18n('@@ui_locale')) !== -1
+            ? 'rtl'
+            : 'ltr'
+    );
+}
 
 /******************************************************************************/
 
@@ -231,6 +233,9 @@ vAPI.closePopup = function() {
 //   Always use a wrapper to seamlessly handle exceptions
 
 vAPI.localStorage = {
+    start: function() {
+        return Promise.resolve();
+    },
     clear: function() {
         try {
             window.localStorage.clear();
@@ -257,6 +262,57 @@ vAPI.localStorage = {
         }
     }
 };
+
+// A service worker has no `localStorage`: keep the items in memory and mirror
+// them in extension storage. `start()` must be awaited before the first read.
+
+if ( typeof document === 'undefined' ) {
+    vAPI.localStorage = (( ) => {
+        const storageKey = 'vAPI.localStorage';
+        const items = new Map();
+        let saveTimer;
+        const save = function() {
+            if ( saveTimer !== undefined ) { return; }
+            saveTimer = vAPI.setTimeout(( ) => {
+                saveTimer = undefined;
+                browser.storage.local.set({
+                    [storageKey]: Object.fromEntries(items)
+                });
+            }, 0);
+        };
+        let starting;
+        return {
+            start: function() {
+                if ( starting === undefined ) {
+                    starting = browser.storage.local.get(storageKey).then(bin => {
+                        const stored = bin instanceof Object && bin[storageKey];
+                        if ( stored instanceof Object === false ) { return; }
+                        for ( const key of Object.keys(stored) ) {
+                            if ( items.has(key) ) { continue; }
+                            items.set(key, stored[key]);
+                        }
+                    }).catch(( ) => { });
+                }
+                return starting;
+            },
+            clear: function() {
+                items.clear();
+                save();
+            },
+            getItem: function(key) {
+                return items.has(key) ? items.get(key) : null;
+            },
+            removeItem: function(key) {
+                items.delete(key);
+                save();
+            },
+            setItem: function(key, value) {
+                items.set(key, `${value}`);
+                save();
+            }
+        };
+    })();
+}
 
 
 

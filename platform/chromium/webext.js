@@ -58,14 +58,17 @@ const promisify = function(thisArg, fnName) {
     };
 };
 
+// Manifest V3 renamed `browserAction` to `action`.
+const chromeAction = chrome.action || chrome.browserAction;
+
 const webext = {
     // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserAction
     browserAction: {
-        setBadgeBackgroundColor: promisifyNoFail(chrome.browserAction, 'setBadgeBackgroundColor'),
-        setBadgeText: promisifyNoFail(chrome.browserAction, 'setBadgeText'),
+        setBadgeBackgroundColor: promisifyNoFail(chromeAction, 'setBadgeBackgroundColor'),
+        setBadgeText: promisifyNoFail(chromeAction, 'setBadgeText'),
         setBadgeTextColor: noopFunc,
-        setIcon: promisifyNoFail(chrome.browserAction, 'setIcon'),
-        setTitle: promisifyNoFail(chrome.browserAction, 'setTitle'),
+        setIcon: promisifyNoFail(chromeAction, 'setIcon'),
+        setTitle: promisifyNoFail(chromeAction, 'setTitle'),
     },
     cookies: {
         getAll: promisifyNoFail(chrome.cookies, 'getAll'),
@@ -168,6 +171,49 @@ if ( chrome.storage.sync instanceof Object ) {
 // https://bugs.chromium.org/p/chromium/issues/detail?id=608854
 if ( chrome.tabs.removeCSS instanceof Function ) {
     webext.tabs.removeCSS = promisifyNoFail(chrome.tabs, 'removeCSS');
+}
+
+// Manifest V3: `tabs.executeScript`/`tabs.insertCSS`/`tabs.removeCSS` are
+// gone, map the Manifest V2 call signatures onto the `scripting` API.
+if (
+    chrome.tabs.executeScript instanceof Function === false &&
+    chrome.scripting instanceof Object
+) {
+    const toTarget = function(tabId, details) {
+        const target = { tabId };
+        if ( details.allFrames ) {
+            target.allFrames = true;
+        } else if ( typeof details.frameId === 'number' ) {
+            target.frameIds = [ details.frameId ];
+        }
+        return target;
+    };
+    const toCSSInjection = function(tabId, details) {
+        const injection = {
+            target: toTarget(tabId, details),
+            origin: details.cssOrigin === 'user' ? 'USER' : 'AUTHOR',
+        };
+        if ( details.file !== undefined ) {
+            injection.files = [ details.file ];
+        } else {
+            injection.css = details.code;
+        }
+        return injection;
+    };
+    webext.tabs.executeScript = async function(tabId, details) {
+        const results = await chrome.scripting.executeScript({
+            target: toTarget(tabId, details),
+            files: [ details.file ],
+            injectImmediately: details.runAt === 'document_start',
+        });
+        return results.map(r => r.result);
+    };
+    webext.tabs.insertCSS = function(tabId, details) {
+        return chrome.scripting.insertCSS(toCSSInjection(tabId, details));
+    };
+    webext.tabs.removeCSS = function(tabId, details) {
+        return chrome.scripting.removeCSS(toCSSInjection(tabId, details));
+    };
 }
 
 return webext;

@@ -1,14 +1,14 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "uMatrix",
     "short_name": "uMatrix",
-    "version": "1.3.3.8",
+    "version": "1.5.0",
     "description": "__MSG_extShortDesc__",
     "icons": {
         "16": "img/icon_16.png",
         "128": "img/icon_128.png"
     },
-    "browser_action": {
+    "action": {
         "default_icon": {
             "19": "img/browsericons/icon19-19.png"
         },
@@ -17,7 +17,7 @@
     },
     "author": "Raymond Hill",
     "background": {
-        "page": "background.html"
+        "service_worker": "js/sw.js"
     },
     "content_scripts": [
     {
@@ -33,9 +33,15 @@
         "all_frames": true
         }
     ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+    },
     "default_locale": "en",
-    "homepage_url": "https://github.com/gorhill/uMatrix/wiki",
-    "minimum_chrome_version": "45.0",
+    "homepage_url": "https://github.com/dmolik/uMatrix",
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "minimum_chrome_version": "120.0",
     "options_ui": {
         "page": "dashboard.html",
         "open_in_tab": true
@@ -43,13 +49,19 @@
     "permissions": [
         "browsingData",
         "cookies",
+        "declarativeNetRequest",
         "privacy",
+        "scripting",
         "storage",
         "tabs",
         "unlimitedStorage",
         "webNavigation",
-        "webRequest",
-        "webRequestBlocking",
-        "<all_urls>"
+        "webRequest"
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [ "main-blocked.html" ],
+            "matches": [ "<all_urls>" ]
+        }
     ]
 }

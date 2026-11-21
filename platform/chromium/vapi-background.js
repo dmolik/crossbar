@@ -35,21 +35,35 @@
 const browser = self.browser;
 const manifest = browser.runtime.getManifest();
 
+// Manifest V3: background is a service worker, network requests can only be
+// observed through `webRequest`, enforcement is done through
+// `declarativeNetRequest` (see dnr.js).
+vAPI.mv3 = manifest.manifest_version === 3;
+
+// declarativeNetRequest session rule ids below 100 are reserved for rules
+// managed outside of dnr.js.
+vAPI.dnrReservedRuleIds = {
+    prefetching: 1,
+};
+
 vAPI.cantWebsocket =
     browser.webRequest.ResourceType instanceof Object === false  ||
     browser.webRequest.ResourceType.WEBSOCKET !== 'websocket';
 
 vAPI.canWASM = vAPI.webextFlavor.soup.has('chromium') === false;
 if ( vAPI.canWASM === false ) {
-    const csp = manifest.content_security_policy;
-    vAPI.canWASM = csp !== undefined && csp.indexOf("'wasm-eval'") !== -1;
+    let csp = manifest.content_security_policy;
+    if ( csp instanceof Object ) {
+        csp = csp.extension_pages;
+    }
+    vAPI.canWASM = typeof csp === 'string' && /'wasm-(?:unsafe-)?eval'/.test(csp);
 }
 
 vAPI.supportsUserStylesheets = vAPI.webextFlavor.soup.has('user_stylesheet');
 
 // The real actual webextFlavor value may not be set in stone, so listen
 // for possible future changes.
-window.addEventListener('webextFlavor', function() {
+self.addEventListener('webextFlavor', function() {
     vAPI.supportsUserStylesheets =
         vAPI.webextFlavor.soup.has('user_stylesheet');
 }, { once: true });
@@ -99,6 +113,11 @@ vAPI.app = {
 
 vAPI.storage = webext.storage.local;
 
+// Only needed when the background context can be terminated at any time.
+vAPI.sessionStorage = vAPI.mv3 && browser.storage.session instanceof Object
+    ? browser.storage.session
+    : undefined;
+
 /******************************************************************************/
 /******************************************************************************/
 
@@ -121,7 +140,12 @@ vAPI.browserSettings = (( ) => {
         // an iframe) for platforms where it's a non-issue.
         // https://github.com/uBlockOrigin/uBlock-issues/issues/9
         //   Some Chromium builds are made to look like a Chrome build.
-        webRTCSupported: vAPI.webextFlavor.soup.has('chromium') === false || undefined,
+        //   A service worker can't create the iframe, and all current
+        //   Chromium builds support WebRTC anyway.
+        webRTCSupported:
+            vAPI.webextFlavor.soup.has('chromium') === false ||
+            typeof document === 'undefined' ||
+            undefined,
 
         // Calling with `true` means IP address leak is not prevented.
         // https://github.com/gorhill/uBlock/issues/533
@@ -709,7 +733,7 @@ if ( webext.browserAction instanceof Object ) {
 vAPI.setIcon = (( ) => {
     const browserAction = vAPI.browserAction;
     const  titleTemplate =
-        browser.runtime.getManifest().browser_action.default_title +
+        (manifest.action || manifest.browser_action).default_title +
         ' ({badge})';
     const icons = [
         { path: { '16': 'img/icon_16-off.png', '32': 'img/icon_32-off.png' } },
@@ -737,6 +761,8 @@ vAPI.setIcon = (( ) => {
         // Firefox uses an internal cache for each setIcon's paths:
         // https://searchfox.org/mozilla-central/rev/5ff2d7683078c96e4b11b8a13674daded935aa44/browser/components/extensions/parent/ext-browserAction.js#631
         if ( vAPI.webextFlavor.soup.has('chromium') === false ) { return; }
+        // No DOM images/canvas in a service worker.
+        if ( typeof Image !== 'function' ) { return; }
 
         const imgs = [];
         for ( let i = 0; i < icons.length; i++ ) {
@@ -844,7 +870,7 @@ vAPI.setIcon = (( ) => {
     };
 })();
 
-browser.browserAction.onClicked.addListener(tab => {
+(browser.action || browser.browserAction).onClicked.addListener(tab => {
     vAPI.tabs.open({
         select: true,
         url: 'popup.html?tabId=' + tab.id + '&responsive=1'
@@ -1125,13 +1151,15 @@ vAPI.warSecret = (( ) => {
         secrets.splice(pos, 1);
     };
 
-    browser.webRequest.onBeforeRequest.addListener(
-        guard,
-        {
-            urls: [ root + 'web_accessible_resources/*' ]
-        },
-        [ 'blocking' ]
-    );
+    if ( vAPI.mv3 === false ) {
+        browser.webRequest.onBeforeRequest.addListener(
+            guard,
+            {
+                urls: [ root + 'web_accessible_resources/*' ]
+            },
+            [ 'blocking' ]
+        );
+    }
 
     return ( ) => {
         if ( secrets.length !== 0 ) {
@@ -1174,7 +1202,7 @@ vAPI.Net = class {
                 return this.onBeforeSuspendableRequest(details);
             },
             this.denormalizeFilters({ urls: [ 'http://*/*', 'https://*/*' ] }),
-            [ 'blocking' ]
+            vAPI.mv3 ? [] : [ 'blocking' ]
         );
     }
     setOptions(/* options */) {
@@ -1205,6 +1233,10 @@ vAPI.Net = class {
         return types;
     }
     addListener(which, clientListener, filters, options) {
+        // Manifest V3: listeners can only observe.
+        if ( vAPI.mv3 && Array.isArray(options) ) {
+            options = options.filter(a => a !== 'blocking');
+        }
         const actualFilters = this.denormalizeFilters(filters);
         const actualListener = this.makeNewListenerProxy(clientListener);
         browser.webRequest[which].addListener(
@@ -1430,14 +1462,14 @@ vAPI.cloud = (( ) => {
 
     // The real actual webextFlavor value may not be set in stone, so listen
     // for possible future changes.
-    window.addEventListener('webextFlavor', function() {
+    self.addEventListener('webextFlavor', function() {
         maxChunkSize = evalMaxChunkSize();
     }, { once: true });
 
     const maxStorageSize = QUOTA_BYTES;
 
     const options = {
-        defaultDeviceName: window.navigator.platform,
+        defaultDeviceName: self.navigator.platform,
         deviceName: vAPI.localStorage.getItem('deviceName') || ''
     };
 
@@ -1574,6 +1606,10 @@ vAPI.cloud = (( ) => {
 
     const getOptions = function(callback) {
         if ( typeof callback !== 'function' ) { return; }
+        // vAPI.localStorage may not have been ready at launch time.
+        if ( options.deviceName === '' ) {
+            options.deviceName = vAPI.localStorage.getItem('deviceName') || '';
+        }
         callback(options);
     };
 

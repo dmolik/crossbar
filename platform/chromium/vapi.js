@@ -49,7 +49,12 @@ var vAPI = self.vAPI; // jshint ignore:line
 // https://forums.lanik.us/viewtopic.php?f=64&t=31522
 //   Skip text/plain documents.
 
-if (
+// Service worker (Chromium MV3): no document, always the background context.
+if ( typeof document === 'undefined' ) {
+    if ( self.vAPI instanceof Object === false || vAPI.uMatrix !== true ) {
+        vAPI = self.vAPI = { uMatrix: true };
+    }
+} else if (
     (
         document instanceof HTMLDocument ||
         document instanceof XMLDocument &&

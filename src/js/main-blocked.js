@@ -41,6 +41,16 @@ let details = {};
     }
 })();
 
+// Manifest V3: declarativeNetRequest redirects here with the blocked URL
+// verbatim in the fragment.
+if ( details.url === undefined && window.location.hash.length > 1 ) {
+    const url = window.location.hash.slice(1);
+    try {
+        details = { url, hn: new URL(url).hostname, type: 'doc', why: '?' };
+    } catch(ex) {
+    }
+}
+
 /******************************************************************************/
 
 uDom('.what').text(details.url);

@@ -52,6 +52,11 @@
     case 'autoUpdate':
         this.scheduleAssetUpdater(value === true ? 120000 : 0);
         break;
+    case 'processHyperlinkAuditing':
+        if ( this.dnr !== undefined ) {
+            this.dnr.refresh();
+        }
+        break;
     default:        
         break;
     }

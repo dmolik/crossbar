@@ -1,12 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # This script assumes a linux environment
+
+set -euo pipefail
 
 echo "*** uMatrix.opera: Creating package"
 echo "*** uMatrix.opera: Copying files"
 
 DES=./dist/build/uMatrix.opera
-rm -r $DES
+rm -rf $DES
 mkdir -p $DES
 
 bash ./tools/make-assets.sh $DES
@@ -35,5 +37,6 @@ cp -R ./src/_locales/zh_TW $DES/_locales/
 
 echo "*** uMatrix.opera: Generating meta..."
 python3 tools/make-opera-meta.py        $DES/
+python3 tools/make-mv3-sw.py            $DES/
 
 echo "*** uMatrix.opera: Package done."

@@ -146,6 +146,33 @@ vAPI.prefetching = (( ) => {
     // https://github.com/uBlockOrigin/uBlock-issues/issues/407
     if ( vAPI.webextFlavor.soup.has('chromium') === false ) { return; }
 
+    // Manifest V3: response headers can only be modified through
+    // declarativeNetRequest.
+    if ( vAPI.mv3 ) {
+        const ruleId = vAPI.dnrReservedRuleIds.prefetching;
+        return state => {
+            const details = { removeRuleIds: [ ruleId ] };
+            if ( !state ) {
+                details.addRules = [ {
+                    id: ruleId,
+                    priority: 1,
+                    action: {
+                        type: 'modifyHeaders',
+                        responseHeaders: [ {
+                            header: 'x-dns-prefetch-control',
+                            operation: 'set',
+                            value: 'off',
+                        } ],
+                    },
+                    condition: { resourceTypes: [ 'main_frame', 'sub_frame' ] },
+                } ];
+            }
+            chrome.declarativeNetRequest.updateSessionRules(details).catch(
+                reason => { console.info(reason); }
+            );
+        };
+    }
+
     let listening = false;
 
     const onHeadersReceived = function(details) {

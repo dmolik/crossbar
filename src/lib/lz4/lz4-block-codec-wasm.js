@@ -49,7 +49,10 @@
 /******************************************************************************/
 
 const wd = (function() {
-    let url = document.currentScript.src;
+    // uMatrix: a service worker has no `document.currentScript`.
+    let url = typeof document === 'object' && document.currentScript
+        ? document.currentScript.src
+        : new URL('/lib/lz4/lz4-block-codec.js', self.location.href).href;
     let match = /[^\/]+$/.exec(url);
     return match !== null ?
         url.slice(0, match.index) :

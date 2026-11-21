@@ -62,6 +62,9 @@ const fireNotification = function(topic, details) {
 /******************************************************************************/
 
 api.fetch = function(url, options = {}) {
+    if ( typeof XMLHttpRequest !== 'function' ) {
+        return fetchWithFetchAPI(url, options);
+    }
     return new Promise((resolve, reject) => {
     // Start of executor
 
@@ -146,6 +149,71 @@ api.fetch = function(url, options = {}) {
 
     // End of executor
     });
+};
+
+// A service worker has no XMLHttpRequest. Same contract as the xhr-based
+// version above: time out only when there is no progress.
+
+const fetchWithFetchAPI = async function(url, options) {
+    const timeoutAfter = µMatrix.rawSettings.assetFetchTimeout * 1000 || 30000;
+    const controller = new self.AbortController();
+    let timeoutTimer;
+    const armTimeout = ( ) => {
+        if ( timeoutTimer !== undefined ) { clearTimeout(timeoutTimer); }
+        timeoutTimer = vAPI.setTimeout(( ) => { controller.abort(); }, timeoutAfter);
+    };
+
+    const fail = function(details, msg) {
+        µMatrix.logger.writeOne({
+            realm: 'message',
+            type: 'error',
+            text: msg,
+        });
+        details.content = '';
+        details.error = msg;
+        return Promise.reject(details);
+    };
+
+    armTimeout();
+    try {
+        const response = await fetch(url, { signal: controller.signal });
+        const details = {
+            url,
+            statusCode: response.status || 200,
+            statusText: response.statusText || ''
+        };
+        if ( details.statusCode < 200 || details.statusCode >= 300 ) {
+            return fail(details, `${url}: ${details.statusCode} ${details.statusText}`);
+        }
+        const chunks = [];
+        let size = 0;
+        const reader = response.body.getReader();
+        for (;;) {
+            const { done, value } = await reader.read();
+            if ( done ) { break; }
+            chunks.push(value);
+            size += value.length;
+            armTimeout();
+        }
+        const bytes = new Uint8Array(size);
+        let offset = 0;
+        for ( const chunk of chunks ) {
+            bytes.set(chunk, offset);
+            offset += chunk.length;
+        }
+        const responseType = options.responseType || 'text';
+        if ( responseType === 'arraybuffer' ) {
+            details.content = bytes.buffer;
+        } else {
+            const text = new TextDecoder().decode(bytes);
+            details.content = responseType === 'json' ? JSON.parse(text) : text;
+        }
+        return details;
+    } catch (ex) {
+        return fail({ url }, errorCantConnectTo.replace('{{url}}', url));
+    } finally {
+        clearTimeout(timeoutTimer);
+    }
 };
 
 /******************************************************************************/

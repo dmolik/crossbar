@@ -219,7 +219,7 @@ Matrix.prototype.modified = function() {
     this.modifyEventTimer = vAPI.setTimeout(
         ( ) => {
             this.modifyEventTimer = undefined;
-            window.dispatchEvent(
+            self.dispatchEvent(
                 new CustomEvent(
                     'matrixRulesetChange',
                     { detail: this }

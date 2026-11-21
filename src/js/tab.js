@@ -201,6 +201,9 @@ housekeep itself.
             this.gcTimer = null;
         }
         tabContexts.delete(this.tabId);
+        if ( µm.dnr !== undefined ) {
+            µm.dnr.onTabContextRemoved(this.tabId);
+        }
     };
 
     TabContext.prototype.onTab = function(tab) {
@@ -273,6 +276,9 @@ housekeep itself.
             this.rootHostname =
             this.rootDomain = '';
             this.secure = false;
+            if ( µm.dnr !== undefined ) {
+                µm.dnr.onTabContextChanged(this);
+            }
             return;
         }
         const stackEntry = this.stack[this.stack.length - 1];
@@ -285,6 +291,9 @@ housekeep itself.
             µm.URI.domainFromHostname(this.rootHostname) ||
             this.rootHostname;
          this.secure = µm.URI.isSecureScheme(this.scheme);
+        if ( µm.dnr !== undefined ) {
+            µm.dnr.onTabContextChanged(this);
+        }
     };
 
     // Called whenever a candidate root URL is spotted for the tab.
@@ -746,10 +755,14 @@ vAPI.tabs = new vAPI.Tabs();
         const currentParts = tabIdToDetails.get(tabId);
         if ( currentParts === newParts ) { return; }
         if ( currentParts === undefined ) {
-            self.requestIdleCallback(
-                ( ) => updateBadge(tabId),
-                { timeout: 701 }
-            );
+            if ( self.requestIdleCallback instanceof Function ) {
+                self.requestIdleCallback(
+                    ( ) => updateBadge(tabId),
+                    { timeout: 701 }
+                );
+            } else {
+                vAPI.setTimeout(( ) => updateBadge(tabId), 47);
+            }
         } else {
             newParts |= currentParts;
         }

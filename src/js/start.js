@@ -26,6 +26,8 @@
 (async ( ) => {
     const µm = µMatrix;
 
+    await vAPI.localStorage.start();
+
     await Promise.all([
         µm.loadRawSettings(),
         µm.loadUserSettings(),
@@ -48,7 +50,7 @@
         log.info(`WASM modules ready ${Date.now()-vAPI.T0} ms after launch`);
     }
 
-    await µm.loadPublicSuffixList(),
+    await µm.loadPublicSuffixList();
     log.info(`PSL ready ${Date.now()-vAPI.T0} ms after launch`);
 
     {
@@ -88,6 +90,11 @@
         }
     }
     log.info(`Tab stores ready ${Date.now()-vAPI.T0} ms after launch`);
+
+    if ( µm.dnr !== undefined ) {
+        await µm.dnr.start();
+        log.info(`declarativeNetRequest rules ready ${Date.now()-vAPI.T0} ms after launch`);
+    }
 
     µm.webRequest.start();
 

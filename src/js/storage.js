@@ -285,15 +285,47 @@ self.addEventListener('rawSettingsChanged', ( ) => {
 };
 
 µMatrix.loadMatrix = async function() {
-    const bin = await vAPI.storage.get('userMatrix');
+    const [ bin, temporary ] = await Promise.all([
+        vAPI.storage.get('userMatrix'),
+        this.loadTemporaryMatrix(),
+    ]);
     if ( bin instanceof Object === false ) { return; }
     if ( typeof bin.userMatrix === 'string' ) {
         this.pMatrix.fromString(bin.userMatrix);
     } else if ( Array.isArray(bin.userMatrix) ) {
         this.pMatrix.fromArray(bin.userMatrix);
     }
-    this.tMatrix.assign(this.pMatrix);
+    if ( Array.isArray(temporary) ) {
+        this.tMatrix.fromArray(temporary);
+    } else {
+        this.tMatrix.assign(this.pMatrix);
+    }
+    this.temporaryMatrixLoaded = true;
 };
+
+// Manifest V3: the service worker is routinely terminated, so the temporary
+// ruleset is mirrored in session storage (cleared when the browser exits) to
+// survive a restart.
+
+µMatrix.loadTemporaryMatrix = async function() {
+    const sessionStorage = vAPI.sessionStorage;
+    if ( sessionStorage instanceof Object === false ) { return; }
+    try {
+        const bin = await sessionStorage.get('temporaryMatrix');
+        return bin instanceof Object ? bin.temporaryMatrix : undefined;
+    } catch(ex) {
+    }
+};
+
+if ( vAPI.sessionStorage instanceof Object ) {
+    self.addEventListener('matrixRulesetChange', ev => {
+        const µm = µMatrix;
+        if ( ev.detail !== µm.tMatrix ) { return; }
+        // Don't overwrite the stored ruleset with the built-in defaults.
+        if ( µm.temporaryMatrixLoaded !== true ) { return; }
+        vAPI.sessionStorage.set({ temporaryMatrix: µm.tMatrix.toArray() });
+    });
+}
 
 /******************************************************************************/
 
@@ -468,8 +500,16 @@ self.addEventListener('rawSettingsChanged', ( ) => {
 /******************************************************************************/
 
 µMatrix.loadHostsFiles = async function() {
-    const status = await this.hostsFilesSelfie.load();
+    let status = await this.hostsFilesSelfie.load();
+    // Manifest V3: the blocklist must also exist as declarativeNetRequest
+    // rules, which the selfie can't restore.
+    if ( status === true && this.dnr !== undefined ) {
+        status = await this.dnr.hasBlocklist();
+    }
     if ( status !== true ) {
+        if ( this.dnr !== undefined ) {
+            this.dnrBlocklist = new Set();
+        }
         this.liveHostsFiles = await this.getAvailableHostsFiles();
         this.ubiquitousBlacklist.reset();
         this.ubiquitousBlacklistRef = this.ubiquitousBlacklist.createOne();
@@ -485,6 +525,10 @@ self.addEventListener('rawSettingsChanged', ( ) => {
         await Promise.all(assetPromises);
         vAPI.storage.set({ liveHostsFiles: Array.from(this.liveHostsFiles) });
         this.hostsFilesSelfie.create();
+        if ( this.dnr !== undefined ) {
+            await this.dnr.setBlocklist(this.dnrBlocklist);
+            this.dnrBlocklist = undefined;
+        }
     }
 
     vAPI.messaging.broadcast({ what: 'loadHostsFilesCompleted' });
@@ -546,6 +590,7 @@ self.addEventListener('rawSettingsChanged', ( ) => {
         'g'
     );
     const reAsciiSegment = /^[\x21-\x7e]+$/;
+    const dnrBlocklist = this.dnrBlocklist;
     let lineBeg = 0;
 
     while ( lineBeg < rawEnd ) {
@@ -584,6 +629,9 @@ self.addEventListener('rawSettingsChanged', ( ) => {
         if ( line === '' ) { continue; }
 
         ubiquitousBlacklistRef.add(line);
+        if ( dnrBlocklist !== undefined ) {
+            dnrBlocklist.add(line);
+        }
     }
 };
 

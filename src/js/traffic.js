@@ -59,6 +59,10 @@ const onBeforeRootFrameRequestHandler = function(fctxt) {
         fctxt.setRealm('network').setFilter(blocked).toLogger();
     }
 
+    // Manifest V3: the request is only observed, declarativeNetRequest
+    // rules take care of redirecting a blocked document (see dnr.js).
+    if ( vAPI.mv3 ) { return; }
+
     // Not blocked
     if ( blocked !== true ) {
         const redirectUrl = maybeRedirectRootFrame(desHn, desURL);
@@ -484,7 +488,7 @@ const onHeadersReceivedHandler = function(details) {
 // https://bugzilla.mozilla.org/show_bug.cgi?id=1302667
 // https://github.com/gorhill/uMatrix/issues/967#issuecomment-373002011
 
-window.addEventListener('webextFlavor', function() {
+self.addEventListener('webextFlavor', function() {
     if ( vAPI.webextFlavor.soup.has('firefox') === false ) { return; }
     if ( vAPI.webextFlavor.major <= 57 ) {
         µMatrix.cspNoWorker =
@@ -611,7 +615,7 @@ const typeFromHeaders = function(headers) {
         }
     };
 
-    window.addEventListener('matrixRulesetChange', handler);
+    self.addEventListener('matrixRulesetChange', handler);
 })();
 
 /******************************************************************************/
@@ -649,15 +653,19 @@ return {
                 { },
                 beforeSendHeadersExtra
             );
-            vAPI.net.addListener(
-                'onHeadersReceived',
-                onHeadersReceivedHandler,
-                {
-                    types: [ 'main_frame', 'sub_frame' ],
-                    urls: [ 'http://*/*', 'https://*/*' ],
-                },
-                [ 'blocking', 'responseHeaders' ]
-            );
+            // Manifest V3: CSP headers are injected by declarativeNetRequest
+            // rules (see dnr.js).
+            if ( vAPI.mv3 !== true ) {
+                vAPI.net.addListener(
+                    'onHeadersReceived',
+                    onHeadersReceivedHandler,
+                    {
+                        types: [ 'main_frame', 'sub_frame' ],
+                        urls: [ 'http://*/*', 'https://*/*' ],
+                    },
+                    [ 'blocking', 'responseHeaders' ]
+                );
+            }
             vAPI.net.unsuspend(true);
         };
     })(),

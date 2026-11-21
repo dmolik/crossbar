@@ -230,11 +230,10 @@
 
 µMatrix.fireDOMEvent = function(name) {
     if (
-        window instanceof Object &&
-        window.dispatchEvent instanceof Function &&
-        window.CustomEvent instanceof Function
+        self.dispatchEvent instanceof Function &&
+        self.CustomEvent instanceof Function
     ) {
-        window.dispatchEvent(new CustomEvent(name));
+        self.dispatchEvent(new CustomEvent(name));
     }
 };
 

@@ -36,7 +36,13 @@
 // WASM file.
 let workingDir = '';
 {
-    const url = new URL(document.currentScript.src);
+    // A service worker has no `document.currentScript`.
+    const url = new URL(
+        typeof document === 'object' && document.currentScript
+            ? document.currentScript.src
+            : '/js/hntrie.js',
+        self.location.href
+    );
     const match = /[^\/]+$/.exec(url.pathname);
     if ( match !== null ) {
         url.pathname = url.pathname.slice(0, match.index);

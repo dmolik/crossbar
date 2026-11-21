@@ -42,7 +42,7 @@ if match:
     version += '.' + str(revision)
     opera_manifest['name'] += ' development build'
     opera_manifest['short_name'] += ' dev build'
-    opera_manifest['browser_action']['default_title'] += ' dev build'
+    opera_manifest['action']['default_title'] += ' dev build'
 
 opera_manifest['version'] = version
 
